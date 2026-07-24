@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import { Copy, Check, Phone, MessageCircle, Instagram, ArrowUpRight, Sparkles, Leaf } from "lucide-react";
 import { SmoothScroll } from "@/lib/smooth-scroll";
 import logoVideo from "@/assets/logo-animation.mp4.asset.json";
+import logoPoster from "@/assets/logo-last.jpg.asset.json";
 import apple from "@/assets/apple.jpg.asset.json";
 import banana from "@/assets/banana.jpg.asset.json";
 import kiwi from "@/assets/kiwi.jpg.asset.json";
@@ -49,36 +51,77 @@ function Nav() {
 
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    const onLoaded = () => {
-      // play once then freeze on last frame
-      v.play().catch(() => {});
-    };
-    const onEnd = () => {
-      v.currentTime = Math.max(0, v.duration - 0.05);
+
+    let ended = false;
+    const freeze = () => {
+      if (!v.duration) return;
+      try {
+        v.currentTime = Math.max(0, v.duration - 0.05);
+      } catch {}
       v.pause();
     };
-    v.addEventListener("loadedmetadata", onLoaded);
+    const onCanPlay = () => {
+      setVideoReady(true);
+      const p = v.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {
+          // Autoplay blocked — just show the last frame poster.
+          setVideoFailed(true);
+          freeze();
+        });
+      }
+    };
+    const onEnd = () => {
+      ended = true;
+      freeze();
+    };
+    const onError = () => setVideoFailed(true);
+
+    v.addEventListener("canplay", onCanPlay);
     v.addEventListener("ended", onEnd);
+    v.addEventListener("error", onError);
+
+    // Safety net: if video hasn't started within 2.5s, reveal poster so
+    // the hero never appears blank on slow / cached loads.
+    const t = setTimeout(() => {
+      if (!ended && v.readyState < 3) setVideoFailed(true);
+    }, 2500);
+
     return () => {
-      v.removeEventListener("loadedmetadata", onLoaded);
+      clearTimeout(t);
+      v.removeEventListener("canplay", onCanPlay);
       v.removeEventListener("ended", onEnd);
+      v.removeEventListener("error", onError);
     };
   }, []);
 
   return (
     <section id="top" className="relative min-h-screen overflow-hidden flex items-center">
       <div className="absolute inset-0">
+        {/* Always-present poster: last frame of the animation. Guarantees
+            the brand shows immediately even if the video is slow or blocked. */}
+        <img
+          src={logoPoster.url}
+          alt="Frezz Drezz"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
         <video
           ref={videoRef}
           src={logoVideo.url}
+          poster={logoPoster.url}
           muted
+          autoPlay
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
+          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+            videoReady && !videoFailed ? "opacity-100" : "opacity-0"
+          }`}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-cream/10 via-cream/40 to-cream" />
       </div>
@@ -87,7 +130,7 @@ function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.2, duration: 1 }}
+          transition={{ delay: 1.2, duration: 1 }}
           className="max-w-2xl"
         >
           <span className="inline-flex items-center gap-2 rounded-full bg-butter/70 backdrop-blur px-4 py-1.5 text-xs font-semibold tracking-widest uppercase text-gold-deep border border-gold/40">
