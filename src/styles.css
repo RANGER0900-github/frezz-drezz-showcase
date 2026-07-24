@@ -5,9 +5,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Bagel Fat One", cursive;
+  --font-display: "Fraunces", serif;
   --font-serif: "Fraunces", serif;
-  --font-sans: "DM Sans", sans-serif;
+  --font-sans: "Inter", sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -70,7 +70,7 @@
       radial-gradient(ellipse 60% 50% at 100% 40%, color-mix(in oklab, var(--butter) 55%, transparent), transparent 70%),
       var(--cream);
   }
-  h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.035em; font-variation-settings: "SOFT" 50, "WONK" 1; }
   ::selection { background: var(--gold); color: var(--ink); }
 }
 
