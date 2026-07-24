@@ -51,51 +51,66 @@ function Nav() {
 
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [videoReady, setVideoReady] = useState(false);
+  // playing = video is confirmed to be playing from the start (not a cached frozen frame)
+  const [playing, setPlaying] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
+    // Immediately reset to frame 0 before anything else — this prevents the
+    // browser from briefly rendering a cached "last frame" on refresh.
+    try { v.currentTime = 0; } catch {}
+
     let ended = false;
     const freeze = () => {
       if (!v.duration) return;
-      try {
-        v.currentTime = Math.max(0, v.duration - 0.05);
-      } catch {}
+      try { v.currentTime = Math.max(0, v.duration - 0.05); } catch {}
       v.pause();
     };
+
+    // Only mark as playing once we get a timeupdate with currentTime > 0,
+    // confirming the video is genuinely playing from the beginning.
+    const onTimeUpdate = () => {
+      if (v.currentTime > 0.05 && !ended) {
+        setPlaying(true);
+      }
+    };
+
     const onCanPlay = () => {
-      setVideoReady(true);
+      // Force reset to start before playing
+      try { v.currentTime = 0; } catch {}
       const p = v.play();
       if (p && typeof p.catch === "function") {
         p.catch(() => {
-          // Autoplay blocked — just show the last frame poster.
           setVideoFailed(true);
           freeze();
         });
       }
     };
+
     const onEnd = () => {
       ended = true;
       freeze();
     };
+
     const onError = () => setVideoFailed(true);
 
     v.addEventListener("canplay", onCanPlay);
+    v.addEventListener("timeupdate", onTimeUpdate);
     v.addEventListener("ended", onEnd);
     v.addEventListener("error", onError);
 
-    // Safety net: if video hasn't started within 2.5s, reveal poster so
-    // the hero never appears blank on slow / cached loads.
+    // Fallback: reveal after 3s if video hasn't fired timeupdate
     const t = setTimeout(() => {
-      if (!ended && v.readyState < 3) setVideoFailed(true);
-    }, 2500);
+      if (!ended && !playing) setVideoFailed(true);
+    }, 3000);
 
     return () => {
       clearTimeout(t);
       v.removeEventListener("canplay", onCanPlay);
+      v.removeEventListener("timeupdate", onTimeUpdate);
       v.removeEventListener("ended", onEnd);
       v.removeEventListener("error", onError);
     };
@@ -103,25 +118,30 @@ function Hero() {
 
   return (
     <section id="top" className="relative min-h-screen overflow-hidden flex items-center">
+      {/* Page-load screen: opaque cream layer that fades away once the video
+          is confirmed playing from frame 0 — eliminates the frozen-last-frame flash. */}
+      <div
+        className="absolute inset-0 z-20 bg-cream pointer-events-none transition-opacity duration-700"
+        style={{ opacity: playing || videoFailed ? 0 : 1 }}
+      />
+
       <div className="absolute inset-0">
-        {/* Always-present poster: last frame of the animation. Guarantees
-            the brand shows immediately even if the video is slow or blocked. */}
+        {/* Poster shown while video loads or if it fails */}
         <img
           src={logoPoster.url}
           alt="Frezz Drezz"
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: playing && !videoFailed ? 0 : 1, transition: "opacity 0.5s ease" }}
         />
         <video
           ref={videoRef}
           src={logoVideo.url}
-          poster={logoPoster.url}
           muted
           autoPlay
           playsInline
           preload="auto"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-            videoReady && !videoFailed ? "opacity-100" : "opacity-0"
-          }`}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ opacity: playing && !videoFailed ? 1 : 0, transition: "opacity 0.5s ease" }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-cream/10 via-cream/40 to-cream" />
       </div>
@@ -212,7 +232,7 @@ function Products() {
 function ProductCard({ p, index }: { p: typeof products[number]; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   return (
     <motion.div
