@@ -1,3 +1,4 @@
+@import "lenis/dist/lenis.css";
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -62,13 +63,11 @@
 @layer base {
   * { border-color: var(--color-border); }
   html {
-    /* Prevent layout shift from scroll-based smooth-scroll */
     scroll-behavior: auto;
   }
   html, body {
     background: var(--color-cream);
     color: var(--color-ink);
-    /* Eliminate sub-pixel rendering jitter on macOS/iOS */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -88,14 +87,13 @@
   }
   ::selection { background: var(--gold); color: var(--ink); }
 
-  /* GPU-promote images involved in parallax / hover transforms */
   img, video {
     will-change: transform;
     backface-visibility: hidden;
   }
 }
 
-/* ───────── Decorative blob ───────── */
+/* Decorative blob */
 @utility wavy-blob {
   background: var(--butter);
   border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
@@ -103,7 +101,7 @@
   backface-visibility: hidden;
 }
 
-/* ───────── Buttons ───────── */
+/* Buttons */
 @utility btn-primary {
   display: inline-flex;
   align-items: center;
@@ -135,7 +133,7 @@
   &:hover { background: var(--ink); color: var(--cream); }
 }
 
-/* ───────── Marquee ───────── */
+/* Marquee */
 @utility marquee {
   display: flex;
   gap: 3rem;
@@ -150,7 +148,7 @@
   to   { transform: translate3d(-50%, 0, 0); }
 }
 
-/* ───────── Float bob ───────── */
+/* Float bob */
 @keyframes float-y {
   0%, 100% { transform: translate3d(0, 0, 0); }
   50%      { transform: translate3d(0, -14px, 0); }
@@ -162,7 +160,7 @@
   backface-visibility: hidden;
 }
 
-/* ───────── Slow spin ───────── */
+/* Slow spin */
 @keyframes spin-slow { to { transform: rotate(360deg); } }
 @utility spin-slow {
   animation: spin-slow 22s linear infinite;

@@ -197,12 +197,14 @@ function ProductCard({ p, index }: { p: typeof products[number]; index: number }
         </svg>
       </div>
       <div className="relative aspect-[3/4] overflow-hidden">
-        <motion.img
-          src={p.img}
-          alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
-          style={{ y }}
-          className="absolute inset-0 h-[115%] w-full object-cover transition-transform duration-700 group-hover:scale-105"
-        />
+        <div className="absolute inset-0 h-[115%] w-full transition-transform duration-700 group-hover:scale-105">
+          <motion.img
+            src={p.img}
+            alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
+            style={{ y }}
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
       <div className="relative p-6 flex items-end justify-between gap-4">
         <div>
