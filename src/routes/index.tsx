@@ -437,8 +437,16 @@ function Contact() {
                     <a href={`tel:+${c.raw}`} className="rounded-full border border-cream/40 px-4 py-2 text-sm font-semibold hover:bg-cream hover:text-ink transition">
                       Call
                     </a>
-                    <button onClick={() => copy(c.num)} className="rounded-full border border-cream/20 px-3 py-2 text-sm hover:bg-cream/10 transition" aria-label="Copy number">
-                      {copied === c.num ? "✓" : "⧉"}
+                    <button
+                      onClick={() => copy(c.num)}
+                      className="rounded-full border border-cream/20 size-9 grid place-items-center hover:bg-cream/10 transition"
+                      aria-label="Copy number"
+                    >
+                      {copied === c.num ? (
+                        <Check className="size-4 text-gold" />
+                      ) : (
+                        <Copy className="size-4 text-cream/80" />
+                      )}
                     </button>
                   </div>
                 </div>
