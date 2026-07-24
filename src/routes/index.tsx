@@ -1,14 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
+import { Copy, Check } from "lucide-react";
 import { SmoothScroll } from "@/lib/smooth-scroll";
-import logoVideo from "@/assets/logo-animation.mp4.asset.json";
-import apple from "@/assets/apple.jpg.asset.json";
-import banana from "@/assets/banana.jpg.asset.json";
-import kiwi from "@/assets/kiwi.jpg.asset.json";
-import strawberry from "@/assets/strawberry.jpg.asset.json";
-import pineapple from "@/assets/pineapple.jpg.asset.json";
-import founders from "@/assets/founders.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,11 +15,11 @@ export const Route = createFileRoute("/")({
 });
 
 const products = [
-  { name: "Pineapple", tag: "Tropical Sunlit", img: pineapple.url, tint: "oklch(0.88 0.13 92)", accent: "#C99A2E" },
-  { name: "Banana", tag: "Golden Cream", img: banana.url, tint: "oklch(0.92 0.10 95)", accent: "#B8933A" },
-  { name: "Strawberry", tag: "Wild Berry", img: strawberry.url, tint: "oklch(0.85 0.10 15)", accent: "#C4436E" },
-  { name: "Kiwi", tag: "Fresh Verdant", img: kiwi.url, tint: "oklch(0.86 0.09 130)", accent: "#7A8F3E" },
-  { name: "Apple", tag: "Orchard Ruby", img: apple.url, tint: "oklch(0.80 0.14 25)", accent: "#B0362C" },
+  { name: "Pineapple", tag: "Tropical Sunlit", img: "/assets/pineapple.jpg", tint: "oklch(0.88 0.13 92)", accent: "#C99A2E" },
+  { name: "Banana",    tag: "Golden Cream",    img: "/assets/banana.jpg",    tint: "oklch(0.92 0.10 95)", accent: "#B8933A" },
+  { name: "Strawberry",tag: "Wild Berry",      img: "/assets/strawberry.jpg",tint: "oklch(0.85 0.10 15)", accent: "#C4436E" },
+  { name: "Kiwi",      tag: "Fresh Verdant",   img: "/assets/kiwi.jpg",      tint: "oklch(0.86 0.09 130)",accent: "#7A8F3E" },
+  { name: "Apple",     tag: "Orchard Ruby",    img: "/assets/apple.jpg",     tint: "oklch(0.80 0.14 25)", accent: "#B0362C" },
 ];
 
 function Nav() {
@@ -37,9 +31,9 @@ function Nav() {
         </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
           <a href="#products" className="hover:text-gold-deep transition">Products</a>
-          <a href="#story" className="hover:text-gold-deep transition">Our Story</a>
+          <a href="#story"    className="hover:text-gold-deep transition">Our Story</a>
           <a href="#founders" className="hover:text-gold-deep transition">Founders</a>
-          <a href="#contact" className="hover:text-gold-deep transition">Contact</a>
+          <a href="#contact"  className="hover:text-gold-deep transition">Contact</a>
         </nav>
         <a href="#contact" className="btn-primary text-sm !py-2 !px-4">Order Now</a>
       </div>
@@ -49,73 +43,59 @@ function Nav() {
 
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  // playing = video confirmed playing from frame 0 (not a cached frozen frame)
-  const [playing, setPlaying] = useState(false);
+  const [playing,     setPlaying]     = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
-    // Immediately reset to frame 0 before anything else — prevents the
-    // browser from briefly rendering a cached "last frame" on refresh.
+    // Reset to frame 0 immediately to avoid browser rendering cached last-frame.
     try { v.currentTime = 0; } catch {}
 
     let ended = false;
+
     const freeze = () => {
       if (!v.duration) return;
       try { v.currentTime = Math.max(0, v.duration - 0.05); } catch {}
       v.pause();
     };
 
-    // Reveal video only once timeupdate fires with currentTime > 0,
-    // confirming it is genuinely playing from the start.
+    // Only reveal the video once timeupdate confirms it's actually playing from start.
     const onTimeUpdate = () => {
-      if (v.currentTime > 0.05 && !ended) {
-        setPlaying(true);
-      }
+      if (v.currentTime > 0.05 && !ended) setPlaying(true);
     };
 
     const onCanPlay = () => {
       try { v.currentTime = 0; } catch {}
       const p = v.play();
       if (p && typeof p.catch === "function") {
-        p.catch(() => {
-          setVideoFailed(true);
-          freeze();
-        });
+        p.catch(() => { setVideoFailed(true); freeze(); });
       }
     };
 
-    const onEnd = () => {
-      ended = true;
-      freeze();
-    };
-
+    const onEnd   = () => { ended = true; freeze(); };
     const onError = () => setVideoFailed(true);
 
-    v.addEventListener("canplay", onCanPlay);
-    v.addEventListener("timeupdate", onTimeUpdate);
-    v.addEventListener("ended", onEnd);
-    v.addEventListener("error", onError);
+    v.addEventListener("canplay",     onCanPlay);
+    v.addEventListener("timeupdate",  onTimeUpdate);
+    v.addEventListener("ended",       onEnd);
+    v.addEventListener("error",       onError);
 
-    // Fallback: if video hasn't confirmed playing after 3s, show anyway
-    const t = setTimeout(() => {
-      if (!ended && !playing) setVideoFailed(true);
-    }, 3000);
+    const t = setTimeout(() => { if (!ended && !playing) setVideoFailed(true); }, 3000);
 
     return () => {
       clearTimeout(t);
-      v.removeEventListener("canplay", onCanPlay);
+      v.removeEventListener("canplay",    onCanPlay);
       v.removeEventListener("timeupdate", onTimeUpdate);
-      v.removeEventListener("ended", onEnd);
-      v.removeEventListener("error", onError);
+      v.removeEventListener("ended",      onEnd);
+      v.removeEventListener("error",      onError);
     };
   }, []);
 
   return (
     <section id="top" className="relative min-h-screen overflow-hidden flex items-center">
-      {/* Cream overlay fades away once video confirmed playing from frame 0 */}
+      {/* Cream overlay — hides any cached frozen frame until video is truly playing */}
       <div
         className="absolute inset-0 z-20 bg-cream pointer-events-none transition-opacity duration-700"
         style={{ opacity: playing || videoFailed ? 0 : 1 }}
@@ -124,7 +104,7 @@ function Hero() {
       <div className="absolute inset-0">
         <video
           ref={videoRef}
-          src={logoVideo.url}
+          src="/assets/logo-animation.mp4"
           muted
           playsInline
           preload="auto"
@@ -152,7 +132,7 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <a href="#products" className="btn-primary">Explore Flavors →</a>
-            <a href="#contact" className="btn-ghost">Place an Order</a>
+            <a href="#contact"  className="btn-ghost">Place an Order</a>
           </div>
         </motion.div>
       </div>
@@ -205,11 +185,8 @@ function Products() {
             Each pouch is a single fruit at its ripest, gently freeze-dried to lock every drop of flavor into a light, weightless bite.
           </p>
         </div>
-
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {products.map((p, i) => (
-            <ProductCard key={p.name} p={p} index={i} />
-          ))}
+          {products.map((p, i) => <ProductCard key={p.name} p={p} index={i} />)}
         </div>
       </div>
     </section>
@@ -228,7 +205,7 @@ function ProductCard({ p, index }: { p: typeof products[number]; index: number }
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
       transition={{ duration: 0.8, delay: index * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
-      className="group relative overflow-hidden rounded-3xl border border-ink/10 bg-card"
+      className="group relative overflow-hidden rounded-3xl border border-ink/10"
       style={{ background: `linear-gradient(180deg, ${p.tint} 0%, var(--cream) 65%)` }}
     >
       <div className="absolute inset-0 opacity-40 pointer-events-none">
@@ -264,8 +241,8 @@ function Story() {
   return (
     <section id="story" className="relative py-32 px-6 overflow-hidden">
       <div className="absolute -top-20 -left-20 size-96 wavy-blob opacity-60 float" />
-      <div className="absolute bottom-0 -right-24 size-[28rem] wavy-blob opacity-50" style={{ background: "color-mix(in oklab, var(--berry) 25%, var(--butter))" }} />
-
+      <div className="absolute bottom-0 -right-24 size-[28rem] wavy-blob opacity-50"
+           style={{ background: "color-mix(in oklab, var(--berry) 25%, var(--butter))" }} />
       <div className="mx-auto max-w-5xl text-center relative">
         <span className="text-xs uppercase tracking-[0.3em] text-gold-deep font-semibold">Our Craft</span>
         <h2 className="mt-4 text-5xl md:text-7xl text-ink leading-[0.95]">
@@ -275,12 +252,11 @@ function Story() {
         <p className="mt-8 max-w-2xl mx-auto font-serif text-xl text-ink/75 leading-relaxed">
           Freeze-drying preserves 97% of a fruit's nutrients. We add nothing. We take nothing away. What arrives is fruit — lighter, crunchier, more itself.
         </p>
-
         <div className="mt-16 grid md:grid-cols-3 gap-6 text-left">
           {[
-            { n: "01", t: "Sourced Ripe", d: "Only peak-season fruit from farms we trust." },
-            { n: "02", t: "Frozen Whole", d: "Locked in at −40°C to protect flavor and nutrients." },
-            { n: "03", t: "Vacuum Dried", d: "Water sublimates, leaving pure crunch behind." },
+            { n: "01", t: "Sourced Ripe",  d: "Only peak-season fruit from farms we trust." },
+            { n: "02", t: "Frozen Whole",  d: "Locked in at −40°C to protect flavor and nutrients." },
+            { n: "03", t: "Vacuum Dried",  d: "Water sublimates, leaving pure crunch behind." },
           ].map((s) => (
             <div key={s.n} className="rounded-2xl bg-card border border-ink/10 p-8">
               <div className="font-display text-4xl text-gold-deep">{s.n}</div>
@@ -298,6 +274,7 @@ function Founders() {
   return (
     <section id="founders" className="relative py-32 px-6">
       <div className="mx-auto max-w-7xl grid md:grid-cols-5 gap-12 items-center">
+        {/* Photo — large, tilted gold glow, floating name badge */}
         <motion.div
           initial={{ opacity: 0, x: -40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -307,7 +284,11 @@ function Founders() {
         >
           <div className="absolute -inset-4 bg-gold/30 rounded-3xl -rotate-2" />
           <div className="relative overflow-hidden rounded-3xl border border-ink/10">
-            <img src={founders.url} alt="Rudrax and Aditya, founders of Frezz Drezz" className="w-full h-full object-cover" />
+            <img
+              src="/assets/founders.jpg"
+              alt="Rudrax and Aditya, founders of Frezz Drezz"
+              className="w-full h-full object-cover"
+            />
           </div>
           <div className="absolute -bottom-6 -right-6 bg-cream border border-ink/10 rounded-2xl px-5 py-3 shadow-xl">
             <div className="text-xs uppercase tracking-widest text-gold-deep font-semibold">Founders</div>
@@ -315,6 +296,7 @@ function Founders() {
           </div>
         </motion.div>
 
+        {/* Text + contact links */}
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -328,20 +310,19 @@ function Founders() {
             Frezz Drezz began at a kitchen table in 2024. We were tired of snacks that pretended to be fruit. So we built one that simply <em>is</em>.
           </p>
           <div className="mt-8 space-y-3">
-            <a href="tel:+916355255862" className="flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 hover:bg-butter transition">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-ink/60">Rudrax</div>
-                <div className="font-semibold text-ink">+91 63552 55862</div>
-              </div>
-              <span className="text-gold-deep">→</span>
-            </a>
-            <a href="tel:+919376136009" className="flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 hover:bg-butter transition">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-ink/60">Aditya</div>
-                <div className="font-semibold text-ink">+91 93761 36009</div>
-              </div>
-              <span className="text-gold-deep">→</span>
-            </a>
+            {[
+              { label: "Rudrax", tel: "+916355255862",  display: "+91 63552 55862" },
+              { label: "Aditya", tel: "+919376136009",  display: "+91 93761 36009" },
+            ].map((f) => (
+              <a key={f.label} href={`tel:${f.tel}`}
+                 className="flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 hover:bg-butter transition group">
+                <div>
+                  <div className="text-xs uppercase tracking-widest text-ink/60">{f.label}</div>
+                  <div className="font-semibold text-ink">{f.display}</div>
+                </div>
+                <span className="text-gold-deep group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+            ))}
           </div>
         </motion.div>
       </div>
@@ -356,6 +337,12 @@ function Contact() {
     setCopied(v);
     setTimeout(() => setCopied(""), 1500);
   };
+
+  const contacts = [
+    { name: "Rudrax", num: "+91 63552 55862", raw: "916355255862" },
+    { name: "Aditya", num: "+91 93761 36009", raw: "919376136009" },
+  ];
+
   return (
     <section id="contact" className="relative py-32 px-6">
       <div className="mx-auto max-w-6xl relative overflow-hidden rounded-[2.5rem] bg-ink text-cream p-10 md:p-20">
@@ -375,10 +362,7 @@ function Contact() {
           </div>
 
           <div className="space-y-3">
-            {[
-              { name: "Rudrax", num: "+91 63552 55862", raw: "916355255862" },
-              { name: "Aditya", num: "+91 93761 36009", raw: "919376136009" },
-            ].map((c) => (
+            {contacts.map((c) => (
               <div key={c.name} className="rounded-2xl bg-cream/5 border border-cream/10 p-5 backdrop-blur">
                 <div className="flex items-center justify-between gap-4">
                   <div>
@@ -386,25 +370,33 @@ function Contact() {
                     <div className="text-xl font-semibold">{c.num}</div>
                   </div>
                   <div className="flex gap-2">
-                    <a href={`https://wa.me/${c.raw}`} target="_blank" rel="noreferrer" className="rounded-full bg-gold text-ink px-4 py-2 text-sm font-semibold hover:bg-cream transition">
+                    <a href={`https://wa.me/${c.raw}`} target="_blank" rel="noreferrer"
+                       className="rounded-full bg-gold text-ink px-4 py-2 text-sm font-semibold hover:bg-cream transition">
                       WhatsApp
                     </a>
-                    <a href={`tel:+${c.raw}`} className="rounded-full border border-cream/40 px-4 py-2 text-sm font-semibold hover:bg-cream hover:text-ink transition">
+                    <a href={`tel:+${c.raw}`}
+                       className="rounded-full border border-cream/40 px-4 py-2 text-sm font-semibold hover:bg-cream hover:text-ink transition">
                       Call
                     </a>
-                    <button onClick={() => copy(c.num)} className="rounded-full border border-cream/20 px-3 py-2 text-sm hover:bg-cream/10 transition" aria-label="Copy number">
-                      {copied === c.num ? "✓" : "⧉"}
+                    {/* Enhanced copy button — lucide icons, smooth fill transition */}
+                    <button
+                      onClick={() => copy(c.num)}
+                      className="rounded-full border border-cream/20 size-9 grid place-items-center hover:bg-cream/10 transition-all duration-200"
+                      aria-label="Copy number"
+                    >
+                      {copied === c.num ? (
+                        <Check className="size-4 text-gold" />
+                      ) : (
+                        <Copy className="size-4 text-cream/80" />
+                      )}
                     </button>
                   </div>
                 </div>
               </div>
             ))}
-            <a
-              href="https://www.instagram.com/frezzdrezz"
-              target="_blank"
-              rel="noreferrer"
-              className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-gold-deep to-berry p-5 hover:brightness-110 transition"
-            >
+
+            <a href="https://www.instagram.com/frezzdrezz" target="_blank" rel="noreferrer"
+               className="flex items-center justify-between rounded-2xl bg-gradient-to-r from-gold-deep to-berry p-5 hover:brightness-110 transition">
               <div>
                 <div className="text-xs uppercase tracking-widest text-cream/80">Instagram</div>
                 <div className="text-xl font-semibold">@frezzdrezz</div>
@@ -424,7 +416,8 @@ function Footer() {
       <div className="mx-auto max-w-7xl flex flex-wrap gap-4 items-center justify-between text-sm text-ink/60">
         <div className="font-display text-xl text-ink">Frezz<span className="text-gold-deep">Drezz</span></div>
         <div>© {new Date().getFullYear()} Frezz Drezz. Pure by nature, crisp by craft.</div>
-        <a href="https://www.instagram.com/frezzdrezz" target="_blank" rel="noreferrer" className="hover:text-gold-deep transition">Instagram ↗</a>
+        <a href="https://www.instagram.com/frezzdrezz" target="_blank" rel="noreferrer"
+           className="hover:text-gold-deep transition">Instagram ↗</a>
       </div>
     </footer>
   );
