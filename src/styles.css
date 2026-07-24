@@ -61,24 +61,49 @@
 
 @layer base {
   * { border-color: var(--color-border); }
-  html, body { background: var(--color-cream); color: var(--color-ink); }
+  html {
+    /* Prevent layout shift from scroll-based smooth-scroll */
+    scroll-behavior: auto;
+  }
+  html, body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    /* Eliminate sub-pixel rendering jitter on macOS/iOS */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
   body {
     font-family: var(--font-sans);
-    -webkit-font-smoothing: antialiased;
     background:
       radial-gradient(ellipse 80% 60% at 20% 0%, color-mix(in oklab, var(--gold) 22%, transparent), transparent 60%),
       radial-gradient(ellipse 60% 50% at 100% 40%, color-mix(in oklab, var(--butter) 55%, transparent), transparent 70%),
       var(--cream);
   }
-  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.035em; font-variation-settings: "SOFT" 50, "WONK" 1; }
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    font-variation-settings: "SOFT" 50, "WONK" 1;
+  }
   ::selection { background: var(--gold); color: var(--ink); }
+
+  /* GPU-promote images involved in parallax / hover transforms */
+  img, video {
+    will-change: transform;
+    backface-visibility: hidden;
+  }
 }
 
+/* ───────── Decorative blob ───────── */
 @utility wavy-blob {
   background: var(--butter);
   border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
+/* ───────── Buttons ───────── */
 @utility btn-primary {
   display: inline-flex;
   align-items: center;
@@ -88,8 +113,11 @@
   background: var(--ink);
   color: var(--cream);
   font-weight: 600;
-  transition: transform .3s ease, background .3s ease, box-shadow .3s ease;
+  transition: transform .4s cubic-bezier(0.22,1,0.36,1),
+              background .4s cubic-bezier(0.22,1,0.36,1),
+              box-shadow .4s cubic-bezier(0.22,1,0.36,1);
   box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--ink) 60%, transparent);
+  will-change: transform;
   &:hover { transform: translateY(-2px); background: var(--gold-deep); }
 }
 
@@ -102,28 +130,42 @@
   border: 1.5px solid var(--ink);
   color: var(--ink);
   font-weight: 600;
-  transition: all .3s ease;
+  transition: all .4s cubic-bezier(0.22,1,0.36,1);
+  will-change: transform, background-color;
   &:hover { background: var(--ink); color: var(--cream); }
 }
 
+/* ───────── Marquee ───────── */
 @utility marquee {
   display: flex;
   gap: 3rem;
   animation: marquee 40s linear infinite;
   width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 
+/* ───────── Float bob ───────── */
 @keyframes float-y {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-14px); }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -14px, 0); }
 }
 
-@utility float { animation: float-y 6s ease-in-out infinite; }
+@utility float {
+  animation: float-y 6s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
 
+/* ───────── Slow spin ───────── */
 @keyframes spin-slow { to { transform: rotate(360deg); } }
-@utility spin-slow { animation: spin-slow 22s linear infinite; }
+@utility spin-slow {
+  animation: spin-slow 22s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+}
