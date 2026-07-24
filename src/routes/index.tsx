@@ -43,72 +43,54 @@ function Nav() {
 
 function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [playing,     setPlaying]     = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
+  const [videoVisible, setVideoVisible] = useState(false);
 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
 
-    // Reset to frame 0 immediately to avoid browser rendering cached last-frame.
-    try { v.currentTime = 0; } catch {}
+    // v.load() is the correct API to reset the video's network state —
+    // it clears any cached currentTime so the browser always starts from frame 0.
+    v.load();
 
-    let ended = false;
+    const onPlaying = () => setVideoVisible(true);
 
-    const freeze = () => {
-      if (!v.duration) return;
+    const onEnd = () => {
+      // Freeze on last frame after playing once.
       try { v.currentTime = Math.max(0, v.duration - 0.05); } catch {}
       v.pause();
+      setVideoVisible(true);
     };
 
-    // Only reveal the video once timeupdate confirms it's actually playing from start.
-    const onTimeUpdate = () => {
-      if (v.currentTime > 0.05 && !ended) setPlaying(true);
-    };
+    const onError = () => setVideoVisible(true); // fallback: remove black flash
 
-    const onCanPlay = () => {
-      try { v.currentTime = 0; } catch {}
-      const p = v.play();
-      if (p && typeof p.catch === "function") {
-        p.catch(() => { setVideoFailed(true); freeze(); });
-      }
-    };
+    v.addEventListener("playing", onPlaying);
+    v.addEventListener("ended",   onEnd);
+    v.addEventListener("error",   onError);
 
-    const onEnd   = () => { ended = true; freeze(); };
-    const onError = () => setVideoFailed(true);
-
-    v.addEventListener("canplay",     onCanPlay);
-    v.addEventListener("timeupdate",  onTimeUpdate);
-    v.addEventListener("ended",       onEnd);
-    v.addEventListener("error",       onError);
-
-    const t = setTimeout(() => { if (!ended && !playing) setVideoFailed(true); }, 3000);
+    // Safety fallback: if video hasn't started after 4s, reveal the section.
+    const t = setTimeout(() => setVideoVisible(true), 4000);
 
     return () => {
       clearTimeout(t);
-      v.removeEventListener("canplay",    onCanPlay);
-      v.removeEventListener("timeupdate", onTimeUpdate);
-      v.removeEventListener("ended",      onEnd);
-      v.removeEventListener("error",      onError);
+      v.removeEventListener("playing", onPlaying);
+      v.removeEventListener("ended",   onEnd);
+      v.removeEventListener("error",   onError);
     };
   }, []);
 
   return (
-    <section id="top" className="relative min-h-screen overflow-hidden flex items-center">
-      {/* Cream overlay — hides any cached frozen frame until video is truly playing */}
-      <div
-        className="absolute inset-0 z-20 bg-cream pointer-events-none transition-opacity duration-700"
-        style={{ opacity: playing || videoFailed ? 0 : 1 }}
-      />
-
+    <section id="top" className="relative min-h-screen overflow-hidden flex items-center bg-cream">
       <div className="absolute inset-0">
         <video
           ref={videoRef}
           src="/assets/logo-animation.mp4"
           muted
+          autoPlay
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-opacity duration-700"
+          style={{ opacity: videoVisible ? 1 : 0 }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-cream/10 via-cream/40 to-cream" />
       </div>

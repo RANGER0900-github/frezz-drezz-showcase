@@ -3,7 +3,7 @@ import Lenis from "lenis";
 
 export function SmoothScroll() {
   useEffect(() => {
-    const lenis = new Lenis({ lerp: 0.12, smoothWheel: true });
+    const lenis = new Lenis({ lerp: 0.09, smoothWheel: true, duration: 1.4 });
     let raf: number;
     const loop = (t: number) => {
       lenis.raf(t);
