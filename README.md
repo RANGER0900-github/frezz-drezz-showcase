@@ -1,29 +1,25 @@
-# Welcome to your Lovable project
+# Frezz Drezz — Pure by Nature, Crisp by Craft
 
-This project was built with [Lovable](https://lovable.dev).
+Freeze-dried fruit made from 100% real fruit. No added sugar. No preservatives. Just pure crunch.
 
-## Build with Lovable
+## Features
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **100% Real Fruit**: Locked at peak ripeness for maximum flavor and nutrients.
+- **Five Signature Flavors**: Pineapple, Banana, Strawberry, Kiwi, and Apple.
+- **Smooth Interactive Experience**: Ultra-smooth hardware-accelerated scrolling and responsive design.
 
 ## Development
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+To run locally:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
 
-## Built with
+## Built With
 
-- TanStack Start
-- TypeScript
-- React
+- TanStack Start & React 19
+- TypeScript & Vite
 - Tailwind CSS
+- Motion & Lenis Smooth Scroll
