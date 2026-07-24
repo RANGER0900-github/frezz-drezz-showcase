@@ -288,55 +288,107 @@ function Story() {
 }
 
 function Founders() {
+  const people = [
+    { name: "Rudrax", role: "Co-founder · Operations", num: "+91 63552 55862", raw: "916355255862", quote: "Every pouch leaves our kitchen the way I'd hand it to a friend." },
+    { name: "Aditya", role: "Co-founder · Product", num: "+91 93761 36009", raw: "919376136009", quote: "We don't chase trends. We chase ripe fruit." },
+  ];
   return (
-    <section id="founders" className="relative py-32 px-6">
-      <div className="mx-auto max-w-7xl grid md:grid-cols-5 gap-12 items-center">
-        <motion.div
-          initial={{ opacity: 0, x: -40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9 }}
-          className="md:col-span-3 relative"
-        >
-          <div className="absolute -inset-4 bg-gold/30 rounded-3xl -rotate-2" />
-          <div className="relative overflow-hidden rounded-3xl border border-ink/10">
-            <img src={founders.url} alt="Rudrax and Aditya, founders of Frezz Drezz" className="w-full h-full object-cover" />
-          </div>
-          <div className="absolute -bottom-6 -right-6 bg-cream border border-ink/10 rounded-2xl px-5 py-3 shadow-xl">
-            <div className="text-xs uppercase tracking-widest text-gold-deep font-semibold">Founders</div>
-            <div className="font-display text-xl text-ink">Rudrax & Aditya</div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.9, delay: 0.15 }}
-          className="md:col-span-2"
-        >
-          <span className="text-xs uppercase tracking-[0.3em] text-gold-deep font-semibold">The Team</span>
-          <h2 className="mt-3 text-5xl text-ink leading-tight">Two friends,<br/>one obsession.</h2>
-          <p className="mt-6 font-serif text-lg text-ink/70">
+    <section id="founders" className="relative py-32 px-6 overflow-hidden">
+      <div className="absolute top-20 right-10 size-72 wavy-blob opacity-40 spin-slow" />
+      <div className="mx-auto max-w-7xl relative">
+        <div className="text-center mb-16">
+          <span className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-gold-deep font-semibold">
+            <Leaf className="size-3.5" /> The Team
+          </span>
+          <h2 className="mt-4 text-5xl md:text-7xl text-ink leading-[0.95]">
+            Two friends,<br/>
+            <span className="italic font-serif font-normal">one obsession.</span>
+          </h2>
+          <p className="mt-6 max-w-2xl mx-auto font-serif text-lg text-ink/70">
             Frezz Drezz began at a kitchen table in 2024. We were tired of snacks that pretended to be fruit. So we built one that simply <em>is</em>.
           </p>
-          <div className="mt-8 space-y-3">
-            <a href="tel:+916355255862" className="flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 hover:bg-butter transition">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-ink/60">Rudrax</div>
-                <div className="font-semibold text-ink">+91 63552 55862</div>
+        </div>
+
+        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
+          {/* Portrait */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            className="lg:col-span-7 relative group"
+          >
+            <div className="absolute -inset-3 bg-gold/40 rounded-[2rem] -rotate-1 transition-transform group-hover:rotate-0 duration-700" />
+            <div className="absolute -inset-3 border-2 border-ink/10 rounded-[2rem] rotate-2 transition-transform group-hover:rotate-0 duration-700" />
+            <div className="relative overflow-hidden rounded-[2rem]">
+              <img
+                src={founders.url}
+                alt="Rudrax and Aditya, founders of Frezz Drezz"
+                className="w-full h-full object-cover aspect-[16/10] transition-transform duration-[1200ms] group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/60 via-transparent to-transparent" />
+              <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-cream">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.3em] text-gold">Est. 2024 · India</div>
+                  <div className="font-display text-3xl md:text-4xl mt-1">Rudrax &amp; Aditya</div>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 rounded-full bg-cream/10 backdrop-blur px-4 py-2 border border-cream/20">
+                  <Sparkles className="size-4 text-gold" />
+                  <span className="text-xs font-medium">The Founders</span>
+                </div>
               </div>
-              <span className="text-gold-deep">→</span>
-            </a>
-            <a href="tel:+919376136009" className="flex items-center justify-between rounded-xl border border-ink/15 px-5 py-4 hover:bg-butter transition">
-              <div>
-                <div className="text-xs uppercase tracking-widest text-ink/60">Aditya</div>
-                <div className="font-semibold text-ink">+91 93761 36009</div>
-              </div>
-              <span className="text-gold-deep">→</span>
+            </div>
+          </motion.div>
+
+          {/* Founder cards */}
+          <div className="lg:col-span-5 flex flex-col gap-5">
+            {people.map((p, i) => (
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: 0.15 + i * 0.1 }}
+                className="relative flex-1 rounded-2xl bg-card border border-ink/10 p-6 hover:border-gold-deep/40 hover:shadow-xl hover:shadow-gold/10 transition-all group"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <div className="text-[10px] uppercase tracking-[0.25em] text-gold-deep font-semibold">{p.role}</div>
+                    <div className="mt-1 font-display text-3xl text-ink">{p.name}</div>
+                  </div>
+                  <span className="font-display text-5xl text-gold/60 leading-none">0{i + 1}</span>
+                </div>
+                <p className="mt-3 font-serif italic text-ink/70 text-sm leading-relaxed">"{p.quote}"</p>
+                <div className="mt-5 flex items-center gap-2">
+                  <a href={`tel:+${p.raw}`} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-ink text-cream px-4 py-2.5 text-sm font-semibold hover:bg-gold-deep transition">
+                    <Phone className="size-4" /> {p.num}
+                  </a>
+                  <a
+                    href={`https://wa.me/${p.raw}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-ink/20 size-10 hover:bg-butter transition"
+                    aria-label={`WhatsApp ${p.name}`}
+                  >
+                    <MessageCircle className="size-4 text-ink" />
+                  </a>
+                </div>
+              </motion.div>
+            ))}
+            <a
+              href="https://www.instagram.com/frezzdrezz"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-flex items-center justify-between rounded-2xl border border-ink/10 bg-butter/50 px-5 py-4 hover:bg-butter transition group"
+            >
+              <span className="flex items-center gap-3 text-ink font-semibold">
+                <Instagram className="size-5 text-gold-deep" />
+                Follow @frezzdrezz
+              </span>
+              <ArrowUpRight className="size-5 text-ink/60 group-hover:text-gold-deep group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
             </a>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
