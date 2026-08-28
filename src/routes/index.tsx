@@ -58,8 +58,9 @@ const products = [
 
 function Nav() {
   return (
-    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-cream/40 border-b border-ink/5 transition-all duration-300">
-      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+    <header className="fixed top-0 inset-x-0 z-50">
+      <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+        <div className="w-24 hidden md:block" />
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
           <a href="#products" className="hover:text-gold-deep transition">
             Products
@@ -74,7 +75,7 @@ function Nav() {
             Contact
           </a>
         </nav>
-        <a href="#contact" className="btn-primary text-sm !py-2 !px-5 ml-auto md:ml-0 shadow-md">
+        <a href="#contact" className="btn-primary text-sm !py-2 !px-4 ml-auto md:ml-0">
           Order Now
         </a>
       </div>
@@ -90,45 +91,24 @@ function Hero() {
     const v = videoRef.current;
     if (!v) return;
 
-    // v.load() resets the video's network state to start from frame 0
-    v.load();
-
     const onPlaying = () => setVideoVisible(true);
-
-    const onTimeUpdate = () => {
-      // Freeze smoothly on the last 0.1s of the clip
-      if (v.duration && v.currentTime >= v.duration - 0.1) {
-        v.pause();
-        setVideoVisible(true);
-      }
-    };
-
-    const onEnd = () => {
-      // Fallback freeze on last frame
-      try {
-        if (v.duration) v.currentTime = Math.max(0, v.duration - 0.05);
-      } catch {
-        // Ignore seek error if duration is unavailable
-      }
-      v.pause();
+    const onEnded = () => {
+      // Naturally freezes on the final frame without glitching
       setVideoVisible(true);
     };
-
-    const onError = () => setVideoVisible(true); // fallback: show section even if video fails
+    const onError = () => setVideoVisible(true);
 
     v.addEventListener("playing", onPlaying);
-    v.addEventListener("timeupdate", onTimeUpdate);
-    v.addEventListener("ended", onEnd);
+    v.addEventListener("ended", onEnded);
     v.addEventListener("error", onError);
 
-    // Safety fallback: if video hasn't started after 3.5s, reveal the section
-    const t = setTimeout(() => setVideoVisible(true), 3500);
+    // Fallback timer: make hero visible even if video takes long to decode
+    const t = setTimeout(() => setVideoVisible(true), 2500);
 
     return () => {
       clearTimeout(t);
       v.removeEventListener("playing", onPlaying);
-      v.removeEventListener("timeupdate", onTimeUpdate);
-      v.removeEventListener("ended", onEnd);
+      v.removeEventListener("ended", onEnded);
       v.removeEventListener("error", onError);
     };
   }, []);
@@ -557,68 +537,34 @@ function Footer() {
 
 function LoadingScreen({ onReady }: { onReady: () => void }) {
   const [progress, setProgress] = useState(0);
-  const [, setPhase] = useState<"loading" | "completing" | "done">("loading");
 
   useEffect(() => {
     let cancelled = false;
+    const startTime = Date.now();
+    const duration = 1200; // 1.2s smooth fluid load
 
-    // Smooth progress simulation
-    const interval = setInterval(() => {
-      setProgress((p) => {
-        if (p >= 88) return p;
-        // Ease-out curve: fast start, slow finish
-        const remaining = 88 - p;
-        return p + remaining * 0.06 + Math.random() * 2;
-      });
-    }, 120);
-
-    // Wait for fonts + preload hero video
-    const fontsReady =
-      typeof document !== "undefined" && document.fonts ? document.fonts.ready : Promise.resolve();
-
-    const videoPreload = new Promise<void>((resolve) => {
-      if (typeof document === "undefined") {
-        resolve();
-        return;
-      }
-      const vid = document.createElement("video");
-      vid.preload = "auto";
-      vid.muted = true;
-      vid.src = "/assets/logo-animation.mp4";
-      vid.oncanplaythrough = () => resolve();
-      vid.onerror = () => resolve(); // don't block on error
-      setTimeout(() => resolve(), 4000); // safety
-    });
-    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 4500));
-
-    Promise.all([fontsReady, Promise.race([videoPreload, timeout])]).then(() => {
+    const updateProgress = () => {
       if (cancelled) return;
-      clearInterval(interval);
-      setPhase("completing");
-      // Animate to 100%
-      let p = 88;
-      const finish = setInterval(() => {
-        p += 3;
-        if (p >= 100) {
-          clearInterval(finish);
-          setProgress(100);
-          setTimeout(() => {
-            if (!cancelled) {
-              setPhase("done");
-              setTimeout(() => {
-                if (!cancelled) onReady();
-              }, 500);
-            }
-          }, 300);
-        } else {
-          setProgress(p);
-        }
-      }, 30);
-    });
+      const elapsed = Date.now() - startTime;
+      const t = Math.min(1, elapsed / duration);
+      // Ease-out cubic curve
+      const eased = 1 - Math.pow(1 - t, 3);
+      const current = Math.round(eased * 100);
+      setProgress(current);
+
+      if (t < 1) {
+        requestAnimationFrame(updateProgress);
+      } else {
+        setTimeout(() => {
+          if (!cancelled) onReady();
+        }, 200);
+      }
+    };
+
+    requestAnimationFrame(updateProgress);
 
     return () => {
       cancelled = true;
-      clearInterval(interval);
     };
   }, [onReady]);
 
@@ -626,111 +572,44 @@ function LoadingScreen({ onReady }: { onReady: () => void }) {
     <motion.div
       key="loader"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, scale: 1.02 }}
-      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-      style={{
-        background:
-          "radial-gradient(ellipse 80% 60% at 50% 40%, oklch(0.93 0.06 90 / 0.8), oklch(0.965 0.028 88) 70%)",
-      }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream px-6"
     >
-      {/* Ambient golden glows */}
-      <div
-        className="absolute top-1/4 left-1/4 size-[30rem] rounded-full blur-[100px] pointer-events-none"
-        style={{
-          background: "oklch(0.82 0.14 82 / 0.15)",
-          animation: "golden-pulse 4s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="absolute bottom-1/4 right-1/4 size-[25rem] rounded-full blur-[80px] pointer-events-none"
-        style={{
-          background: "oklch(0.62 0.19 22 / 0.08)",
-          animation: "golden-pulse 5s ease-in-out infinite 1s",
-        }}
-      />
-
-      <div className="relative flex flex-col items-center gap-10">
-        {/* Spinning ring */}
-        <div className="relative size-20">
-          <svg className="size-full -rotate-90" viewBox="0 0 80 80">
-            {/* Track */}
-            <circle
-              cx="40"
-              cy="40"
-              r="36"
-              fill="none"
-              stroke="oklch(0.22 0.05 60 / 0.06)"
-              strokeWidth="1.5"
-            />
-            {/* Progress arc */}
-            <motion.circle
-              cx="40"
-              cy="40"
-              r="36"
-              fill="none"
-              stroke="url(#gold-gradient)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeDasharray={`${2 * Math.PI * 36}`}
-              initial={{ strokeDashoffset: 2 * Math.PI * 36 }}
-              animate={{ strokeDashoffset: 2 * Math.PI * 36 * (1 - progress / 100) }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-            <defs>
-              <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="oklch(0.82 0.14 82)" />
-                <stop offset="100%" stopColor="oklch(0.62 0.14 72)" />
-              </linearGradient>
-            </defs>
-          </svg>
-          {/* Percentage inside */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-sm font-semibold text-ink/70 tabular-nums">
-              {Math.round(progress)}
-            </span>
-          </div>
-        </div>
-
-        {/* Brand wordmark with shimmer */}
-        <div className="relative">
-          <h1 className="font-display text-5xl md:text-6xl tracking-tight text-ink/90">
-            Frezz<span className="text-gold-deep">Drezz</span>
-          </h1>
-          {/* Shimmer overlay */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(90deg, transparent 30%, oklch(0.82 0.14 82 / 0.3) 50%, transparent 70%)",
-              backgroundSize: "200% 100%",
-              animation: "shimmer 2.5s ease-in-out infinite",
-              mixBlendMode: "overlay",
-            }}
-          />
-        </div>
+      <div className="relative flex flex-col items-center max-w-sm w-full">
+        {/* Brand wordmark */}
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="font-display text-4xl sm:text-5xl tracking-tight text-ink text-center"
+        >
+          Frezz<span className="text-gold-deep">Drezz</span>
+        </motion.h1>
 
         {/* Tagline */}
         <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="text-[11px] uppercase tracking-[0.35em] text-ink/40 font-medium"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15, duration: 0.5 }}
+          className="mt-3 text-xs uppercase tracking-[0.28em] text-ink/60 font-medium text-center"
         >
           Pure by nature · Crisp by craft
         </motion.p>
 
-        {/* Slim progress bar */}
-        <div className="w-56 h-px bg-ink/8 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full rounded-full"
-            style={{
-              background: "linear-gradient(90deg, oklch(0.82 0.14 82), oklch(0.62 0.14 72))",
-            }}
-            initial={{ width: "0%" }}
-            animate={{ width: `${Math.min(progress, 100)}%` }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-          />
+        {/* Sleek Progress Bar */}
+        <div className="mt-8 w-full max-w-[260px] flex flex-col items-center gap-2.5">
+          <div className="w-full h-1 bg-ink/10 rounded-full overflow-hidden p-0.5">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-gold-deep to-gold"
+              style={{ width: `${progress}%` }}
+              transition={{ ease: "easeOut" }}
+            />
+          </div>
+          <div className="flex items-center justify-between w-full text-[11px] font-mono text-ink/50">
+            <span>LOADING</span>
+            <span>{progress}%</span>
+          </div>
         </div>
       </div>
     </motion.div>
