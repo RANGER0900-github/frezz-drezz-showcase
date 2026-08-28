@@ -250,6 +250,11 @@ function ProductCard({ p, index }: { p: (typeof products)[number]; index: number
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
+  const waMessage = encodeURIComponent(
+    `Hello! I want to buy *${p.name}* flavour 🍃\n\nQuantity = \nAddress = \n`,
+  );
+  const waLink = `https://wa.me/916355255862?text=${waMessage}`;
+
   return (
     <motion.div
       ref={ref}
@@ -290,9 +295,17 @@ function ProductCard({ p, index }: { p: (typeof products)[number]; index: number
           </span>
           <h3 className="mt-1 text-3xl text-ink">{p.name}</h3>
         </div>
-        <span className="shrink-0 size-11 rounded-full bg-ink text-cream grid place-items-center text-lg transition-transform group-hover:rotate-45">
-          →
-        </span>
+        <a
+          href={waLink}
+          target="_blank"
+          rel="noreferrer"
+          className="shrink-0 inline-flex items-center gap-2 rounded-full bg-ink text-cream px-5 py-2.5 text-sm font-semibold transition-all duration-300 hover:bg-gold-deep hover:shadow-lg hover:shadow-gold-deep/25 hover:-translate-y-0.5 active:scale-95"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" className="size-4" aria-hidden="true">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg>
+          Buy Now
+        </a>
       </div>
     </motion.div>
   );
@@ -535,30 +548,57 @@ function Footer() {
 
 function LoadingScreen({ onReady }: { onReady: () => void }) {
   const [progress, setProgress] = useState(0);
+  const [, setPhase] = useState<"loading" | "completing" | "done">("loading");
 
   useEffect(() => {
     let cancelled = false;
 
-    // Simulate smooth progress while we wait for real assets
+    // Smooth progress simulation
     const interval = setInterval(() => {
       setProgress((p) => {
-        if (p >= 90) return p; // cap at 90 until truly ready
-        return p + Math.random() * 8;
+        if (p >= 88) return p;
+        // Ease-out curve: fast start, slow finish
+        const remaining = 88 - p;
+        return p + remaining * 0.06 + Math.random() * 2;
       });
-    }, 200);
+    }, 120);
 
+    // Wait for fonts + preload hero video
     const fontsReady = document.fonts.ready;
-    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 4000));
+    const videoPreload = new Promise<void>((resolve) => {
+      const vid = document.createElement("video");
+      vid.preload = "auto";
+      vid.muted = true;
+      vid.src = "/assets/logo-animation.mp4";
+      vid.oncanplaythrough = () => resolve();
+      vid.onerror = () => resolve(); // don't block on error
+      setTimeout(() => resolve(), 5000); // safety
+    });
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 5000));
 
-    // Wait for fonts, then finish
-    Promise.race([fontsReady, timeout]).then(() => {
+    Promise.all([fontsReady, Promise.race([videoPreload, timeout])]).then(() => {
       if (cancelled) return;
       clearInterval(interval);
-      setProgress(100);
-      // Small delay to show 100% before fading out
-      setTimeout(() => {
-        if (!cancelled) onReady();
-      }, 400);
+      setPhase("completing");
+      // Animate to 100%
+      let p = 88;
+      const finish = setInterval(() => {
+        p += 3;
+        if (p >= 100) {
+          clearInterval(finish);
+          setProgress(100);
+          setTimeout(() => {
+            if (!cancelled) {
+              setPhase("done");
+              setTimeout(() => {
+                if (!cancelled) onReady();
+              }, 500);
+            }
+          }, 300);
+        } else {
+          setProgress(p);
+        }
+      }, 30);
     });
 
     return () => {
@@ -571,50 +611,112 @@ function LoadingScreen({ onReady }: { onReady: () => void }) {
     <motion.div
       key="loader"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream"
+      exit={{ opacity: 0, scale: 1.02 }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
+      style={{
+        background:
+          "radial-gradient(ellipse 80% 60% at 50% 40%, oklch(0.93 0.06 90 / 0.8), oklch(0.965 0.028 88) 70%)",
+      }}
     >
-      {/* Decorative glow */}
-      <div className="absolute -top-32 -left-32 size-96 rounded-full bg-gold/20 blur-3xl" />
-      <div className="absolute -bottom-32 -right-32 size-96 rounded-full bg-butter blur-3xl" />
+      {/* Ambient golden glows */}
+      <div
+        className="absolute top-1/4 left-1/4 size-[30rem] rounded-full blur-[100px] pointer-events-none"
+        style={{
+          background: "oklch(0.82 0.14 82 / 0.15)",
+          animation: "golden-pulse 4s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute bottom-1/4 right-1/4 size-[25rem] rounded-full blur-[80px] pointer-events-none"
+        style={{
+          background: "oklch(0.62 0.19 22 / 0.08)",
+          animation: "golden-pulse 5s ease-in-out infinite 1s",
+        }}
+      />
 
-      <div className="relative flex flex-col items-center gap-8">
-        {/* Pulsing dot trio */}
-        <div className="flex items-center gap-3">
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={i}
-              className="size-2.5 rounded-full bg-gold-deep"
-              animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-                delay: i * 0.2,
-                ease: "easeInOut",
-              }}
+      <div className="relative flex flex-col items-center gap-10">
+        {/* Spinning ring */}
+        <div className="relative size-20">
+          <svg className="size-full -rotate-90" viewBox="0 0 80 80">
+            {/* Track */}
+            <circle
+              cx="40"
+              cy="40"
+              r="36"
+              fill="none"
+              stroke="oklch(0.22 0.05 60 / 0.06)"
+              strokeWidth="1.5"
             />
-          ))}
+            {/* Progress arc */}
+            <motion.circle
+              cx="40"
+              cy="40"
+              r="36"
+              fill="none"
+              stroke="url(#gold-gradient)"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeDasharray={`${2 * Math.PI * 36}`}
+              initial={{ strokeDashoffset: 2 * Math.PI * 36 }}
+              animate={{ strokeDashoffset: 2 * Math.PI * 36 * (1 - progress / 100) }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+            />
+            <defs>
+              <linearGradient id="gold-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="oklch(0.82 0.14 82)" />
+                <stop offset="100%" stopColor="oklch(0.62 0.14 72)" />
+              </linearGradient>
+            </defs>
+          </svg>
+          {/* Percentage inside */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-sm font-semibold text-ink/70 tabular-nums">
+              {Math.round(progress)}
+            </span>
+          </div>
         </div>
 
-        {/* Brand wordmark */}
-        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink">
-          Frezz<span className="text-gold-deep">Drezz</span>
-        </h1>
+        {/* Brand wordmark with shimmer */}
+        <div className="relative">
+          <h1 className="font-display text-5xl md:text-6xl tracking-tight text-ink/90">
+            Frezz<span className="text-gold-deep">Drezz</span>
+          </h1>
+          {/* Shimmer overlay */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent 30%, oklch(0.82 0.14 82 / 0.3) 50%, transparent 70%)",
+              backgroundSize: "200% 100%",
+              animation: "shimmer 2.5s ease-in-out infinite",
+              mixBlendMode: "overlay",
+            }}
+          />
+        </div>
 
-        {/* Progress bar */}
-        <div className="w-48 h-0.5 bg-ink/10 rounded-full overflow-hidden">
+        {/* Tagline */}
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="text-[11px] uppercase tracking-[0.35em] text-ink/40 font-medium"
+        >
+          Pure by nature · Crisp by craft
+        </motion.p>
+
+        {/* Slim progress bar */}
+        <div className="w-56 h-px bg-ink/8 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gold-deep rounded-full"
+            className="h-full rounded-full"
+            style={{
+              background: "linear-gradient(90deg, oklch(0.82 0.14 82), oklch(0.62 0.14 72))",
+            }}
             initial={{ width: "0%" }}
             animate={{ width: `${Math.min(progress, 100)}%` }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           />
         </div>
-
-        <p className="text-xs uppercase tracking-[0.3em] text-ink/50 font-medium">
-          Pure by nature, crisp by craft
-        </p>
       </div>
     </motion.div>
   );
