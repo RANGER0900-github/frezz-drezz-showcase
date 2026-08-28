@@ -78,9 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Frezz Drezz — Pure by Nature, Crisp by Craft" },
-      { name: "description", content: "Frezz Drezz freeze-dried fruit: 100% real fruit, no added sugar, no preservatives. Crisp, pure, and made with craft." },
+      {
+        name: "description",
+        content:
+          "Frezz Drezz freeze-dried fruit: 100% real fruit, no added sugar, no preservatives. Crisp, pure, and made with craft.",
+      },
       { property: "og:title", content: "Frezz Drezz — Freeze Dried Fruit" },
-      { property: "og:description", content: "Pure by nature, crisp by craft. Discover Frezz Drezz freeze-dried fruit." },
+      {
+        property: "og:description",
+        content: "Pure by nature, crisp by craft. Discover Frezz Drezz freeze-dried fruit.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -90,7 +97,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/favicon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap",
+      },
     ],
   }),
   shellComponent: RootShell,
