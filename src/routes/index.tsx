@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import { motion, useScroll, useTransform } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import { Copy, Check } from "lucide-react";
 import { SmoothScroll } from "@/lib/smooth-scroll";
 
@@ -60,9 +60,6 @@ function Nav() {
   return (
     <header className="fixed top-0 inset-x-0 z-50">
       <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
-        <a href="#top" className="font-display text-2xl text-ink tracking-tight">
-          Frezz<span className="text-gold-deep">Drezz</span>
-        </a>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
           <a href="#products" className="hover:text-gold-deep transition">
             Products
@@ -536,9 +533,114 @@ function Footer() {
   );
 }
 
+function LoadingScreen({ onReady }: { onReady: () => void }) {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    // Simulate smooth progress while we wait for real assets
+    const interval = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 90) return p; // cap at 90 until truly ready
+        return p + Math.random() * 8;
+      });
+    }, 200);
+
+    const fontsReady = document.fonts.ready;
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 4000));
+
+    // Wait for fonts, then finish
+    Promise.race([fontsReady, timeout]).then(() => {
+      if (cancelled) return;
+      clearInterval(interval);
+      setProgress(100);
+      // Small delay to show 100% before fading out
+      setTimeout(() => {
+        if (!cancelled) onReady();
+      }, 400);
+    });
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [onReady]);
+
+  return (
+    <motion.div
+      key="loader"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream"
+    >
+      {/* Decorative glow */}
+      <div className="absolute -top-32 -left-32 size-96 rounded-full bg-gold/20 blur-3xl" />
+      <div className="absolute -bottom-32 -right-32 size-96 rounded-full bg-butter blur-3xl" />
+
+      <div className="relative flex flex-col items-center gap-8">
+        {/* Pulsing dot trio */}
+        <div className="flex items-center gap-3">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              className="size-2.5 rounded-full bg-gold-deep"
+              animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+                delay: i * 0.2,
+                ease: "easeInOut",
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Brand wordmark */}
+        <h1 className="font-display text-4xl md:text-5xl tracking-tight text-ink">
+          Frezz<span className="text-gold-deep">Drezz</span>
+        </h1>
+
+        {/* Progress bar */}
+        <div className="w-48 h-0.5 bg-ink/10 rounded-full overflow-hidden">
+          <motion.div
+            className="h-full bg-gold-deep rounded-full"
+            initial={{ width: "0%" }}
+            animate={{ width: `${Math.min(progress, 100)}%` }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          />
+        </div>
+
+        <p className="text-xs uppercase tracking-[0.3em] text-ink/50 font-medium">
+          Pure by nature, crisp by craft
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
 function Home() {
+  const [loaded, setLoaded] = useState(false);
+  const handleReady = useCallback(() => setLoaded(true), []);
+
+  // Prevent scroll while loading
+  useEffect(() => {
+    if (!loaded) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [loaded]);
+
   return (
     <div className="relative">
+      <AnimatePresence mode="wait">
+        {!loaded && <LoadingScreen onReady={handleReady} />}
+      </AnimatePresence>
       <SmoothScroll />
       <Nav />
       <Hero />
