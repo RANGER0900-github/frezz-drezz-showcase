@@ -58,8 +58,8 @@ const products = [
 
 function Nav() {
   return (
-    <header className="fixed top-0 inset-x-0 z-50">
-      <div className="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-cream/40 border-b border-ink/5 transition-all duration-300">
+      <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-ink/80">
           <a href="#products" className="hover:text-gold-deep transition">
             Products
@@ -74,7 +74,7 @@ function Nav() {
             Contact
           </a>
         </nav>
-        <a href="#contact" className="btn-primary text-sm !py-2 !px-4">
+        <a href="#contact" className="btn-primary text-sm !py-2 !px-5 ml-auto md:ml-0 shadow-md">
           Order Now
         </a>
       </div>
@@ -90,16 +90,23 @@ function Hero() {
     const v = videoRef.current;
     if (!v) return;
 
-    // v.load() is the correct API to reset the video's network state —
-    // it clears any cached currentTime so the browser always starts from frame 0.
+    // v.load() resets the video's network state to start from frame 0
     v.load();
 
     const onPlaying = () => setVideoVisible(true);
 
+    const onTimeUpdate = () => {
+      // Freeze smoothly on the last 0.1s of the clip
+      if (v.duration && v.currentTime >= v.duration - 0.1) {
+        v.pause();
+        setVideoVisible(true);
+      }
+    };
+
     const onEnd = () => {
-      // Freeze on last frame after playing once.
+      // Fallback freeze on last frame
       try {
-        v.currentTime = Math.max(0, v.duration - 0.05);
+        if (v.duration) v.currentTime = Math.max(0, v.duration - 0.05);
       } catch {
         // Ignore seek error if duration is unavailable
       }
@@ -107,18 +114,20 @@ function Hero() {
       setVideoVisible(true);
     };
 
-    const onError = () => setVideoVisible(true); // fallback: remove black flash
+    const onError = () => setVideoVisible(true); // fallback: show section even if video fails
 
     v.addEventListener("playing", onPlaying);
+    v.addEventListener("timeupdate", onTimeUpdate);
     v.addEventListener("ended", onEnd);
     v.addEventListener("error", onError);
 
-    // Safety fallback: if video hasn't started after 4s, reveal the section.
-    const t = setTimeout(() => setVideoVisible(true), 4000);
+    // Safety fallback: if video hasn't started after 3.5s, reveal the section
+    const t = setTimeout(() => setVideoVisible(true), 3500);
 
     return () => {
       clearTimeout(t);
       v.removeEventListener("playing", onPlaying);
+      v.removeEventListener("timeupdate", onTimeUpdate);
       v.removeEventListener("ended", onEnd);
       v.removeEventListener("error", onError);
     };
@@ -564,17 +573,23 @@ function LoadingScreen({ onReady }: { onReady: () => void }) {
     }, 120);
 
     // Wait for fonts + preload hero video
-    const fontsReady = document.fonts.ready;
+    const fontsReady =
+      typeof document !== "undefined" && document.fonts ? document.fonts.ready : Promise.resolve();
+
     const videoPreload = new Promise<void>((resolve) => {
+      if (typeof document === "undefined") {
+        resolve();
+        return;
+      }
       const vid = document.createElement("video");
       vid.preload = "auto";
       vid.muted = true;
       vid.src = "/assets/logo-animation.mp4";
       vid.oncanplaythrough = () => resolve();
       vid.onerror = () => resolve(); // don't block on error
-      setTimeout(() => resolve(), 5000); // safety
+      setTimeout(() => resolve(), 4000); // safety
     });
-    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 5000));
+    const timeout = new Promise<void>((resolve) => setTimeout(resolve, 4500));
 
     Promise.all([fontsReady, Promise.race([videoPreload, timeout])]).then(() => {
       if (cancelled) return;
