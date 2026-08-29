@@ -206,3 +206,62 @@
   will-change: transform;
   backface-visibility: hidden;
 }
+
+/* Shimmer Animation */
+@keyframes text-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@utility shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--ink) 0%,
+    var(--gold-deep) 35%,
+    var(--gold) 50%,
+    var(--gold-deep) 65%,
+    var(--ink) 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 4s linear infinite;
+}
+
+/* Glassmorphism */
+@utility glass-nav {
+  background: color-mix(in oklab, var(--cream) 80%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid color-mix(in oklab, var(--gold) 35%, transparent);
+  box-shadow: 0 16px 32px -8px color-mix(in oklab, var(--ink) 6%, transparent);
+}
+
+@utility glass-card {
+  background: color-mix(in oklab, var(--cream) 70%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in oklab, var(--ink) 8%, transparent);
+}
+
+/* Pulse soft */
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.02);
+  }
+}
+
+@utility pulse-soft {
+  animation: pulse-soft 3s ease-in-out infinite;
+}
