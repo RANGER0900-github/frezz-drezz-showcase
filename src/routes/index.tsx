@@ -1452,100 +1452,13 @@ function Footer() {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                        LIVE VIDEO OVERLAY TUNER (TESTING)                  */
-/* -------------------------------------------------------------------------- */
-
-function VideoTunerHUD({
-  overlayOpacity,
-  onChange,
-}: {
-  overlayOpacity: number;
-  onChange: (val: number) => void;
-}) {
-  const [minimized, setMinimized] = useState(false);
-
-  return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-      {minimized ? (
-        <button
-          onClick={() => setMinimized(false)}
-          className="rounded-full bg-ink text-gold border border-gold/40 px-4 py-2 text-xs font-semibold shadow-2xl flex items-center gap-2 hover:scale-105 transition active:scale-95 cursor-pointer backdrop-blur-md"
-        >
-          <span>🎬 BG Video Tuner</span>
-          <span className="bg-gold text-ink px-1.5 py-0.2 rounded font-mono text-[10px] font-bold">
-            {overlayOpacity}%
-          </span>
-        </button>
-      ) : (
-        <div className="rounded-2xl bg-ink/95 backdrop-blur-xl border border-gold/40 p-4 text-cream shadow-2xl w-72 text-xs select-none">
-          <div className="flex items-center justify-between pb-2 border-b border-cream/15 mb-2.5">
-            <div className="flex items-center gap-1.5 font-semibold text-gold">
-              <span>🎬 Live Video Tuner</span>
-            </div>
-            <button
-              onClick={() => setMinimized(true)}
-              className="text-cream/50 hover:text-cream text-xs px-1 cursor-pointer"
-              title="Minimize tuner"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-cream/70">Overlay Strength:</span>
-            <span className="font-mono font-bold text-gold text-sm">{overlayOpacity}%</span>
-          </div>
-
-          <div className="text-[10px] text-cream/55 mb-3 font-serif">
-            {overlayOpacity === 0
-              ? "✨ 100% Raw Original Video"
-              : overlayOpacity <= 20
-                ? "🌟 Very Rich / Original Look"
-                : overlayOpacity <= 35
-                  ? "⚖️ Balanced Vibrant Tint"
-                  : "☁️ Soft Editorial Light Blend"}
-          </div>
-
-          {/* Stepper Buttons */}
-          <div className="flex items-center gap-2 mb-2.5">
-            <button
-              onClick={() => onChange(Math.max(0, overlayOpacity - 5))}
-              className="flex-1 py-2 rounded-xl bg-cream/10 border border-cream/20 hover:bg-gold hover:text-ink font-semibold text-xs active:scale-95 transition cursor-pointer flex items-center justify-center gap-1"
-              title="Make video MORE original"
-            >
-              <span className="text-sm font-bold">−</span> (More Raw)
-            </button>
-            <button
-              onClick={() => onChange(Math.min(100, overlayOpacity + 5))}
-              className="flex-1 py-2 rounded-xl bg-cream/10 border border-cream/20 hover:bg-gold hover:text-ink font-semibold text-xs active:scale-95 transition cursor-pointer flex items-center justify-center gap-1"
-              title="Make video LIGHTER"
-            >
-              <span className="text-sm font-bold">+</span> (Lighter)
-            </button>
-          </div>
-
-          {/* Quick Presets */}
-          <div className="grid grid-cols-4 gap-1 text-[10px] text-center">
-            {[0, 15, 30, 45].map((val) => (
-              <button
-                key={val}
-                onClick={() => onChange(val)}
-                className={`py-1.5 rounded-lg border transition cursor-pointer font-medium ${
-                  overlayOpacity === val
-                    ? "bg-gold text-ink font-bold border-gold shadow-xs"
-                    : "bg-cream/5 border-cream/15 text-cream/70 hover:bg-cream/15 hover:text-cream"
-                }`}
-              >
-                {val === 0 ? "0% Raw" : `${val}%`}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+/**
+ * Hero Background Video Overlay Darkness / Cream Opacity setting
+ * 0 = 100% Raw Original Video
+ * 23 = User chosen balanced vibrant look (23% cream overlay)
+ * 50 = Soft editorial look
+ */
+const HERO_VIDEO_OVERLAY_PERCENT = 23;
 
 /* -------------------------------------------------------------------------- */
 /*                                 HOME ROOT                                  */
@@ -1554,7 +1467,6 @@ function VideoTunerHUD({
 function Home() {
   const [loaded, setLoaded] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null);
-  const [videoOverlay, setVideoOverlay] = useState(25); // Default to a vibrant 25% tint
 
   const handlePreloaderFinish = useCallback(() => {
     setLoaded(true);
@@ -1584,7 +1496,7 @@ function Home() {
 
       <SmoothScroll />
       <Nav onOpenQuickOrder={handleOpenGeneralOrder} />
-      <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={videoOverlay} />
+      <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={HERO_VIDEO_OVERLAY_PERCENT} />
       <Marquee />
       <Products onSelectProduct={setSelectedProduct} />
       <Story />
@@ -1594,9 +1506,6 @@ function Home() {
 
       {/* Interactive Product Quick View & Order Configurator */}
       <ProductQuickViewModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-
-      {/* Live Video Overlay Testing Controller */}
-      <VideoTunerHUD overlayOpacity={videoOverlay} onChange={setVideoOverlay} />
     </div>
   );
 }
