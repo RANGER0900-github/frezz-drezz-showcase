@@ -877,11 +877,11 @@ function ProductQuickViewModal({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl md:max-w-4xl bg-cream border-gold/30 p-0 overflow-hidden rounded-[2rem] shadow-2xl">
-        <div className="grid md:grid-cols-12 min-h-[500px]">
-          {/* Left Column: Big, Majestic Product Artwork Showcase (5 of 12 cols on desktop) */}
+      <DialogContent className="max-w-3xl bg-cream border-gold/30 p-0 overflow-hidden rounded-3xl shadow-2xl max-h-[90vh]">
+        <div className="grid md:grid-cols-12 items-stretch">
+          {/* Left Column: Focused Artwork Showcase (5 cols) */}
           <div
-            className="md:col-span-6 relative p-6 md:p-7 flex flex-col justify-between overflow-hidden bg-butter/30 rounded-t-[2rem] md:rounded-l-[2rem] md:rounded-tr-none min-h-[380px] md:min-h-[540px]"
+            className="md:col-span-5 relative p-5 md:p-6 flex flex-col justify-between items-center overflow-hidden bg-butter/30 rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none"
             style={{
               background: `radial-gradient(circle at center, ${product.tint} 0%, var(--cream) 100%)`,
             }}
@@ -889,7 +889,7 @@ function ProductQuickViewModal({
             {/* Top Badges */}
             <div className="w-full flex items-center justify-between z-10">
               <span
-                className="text-[11px] uppercase tracking-widest font-semibold px-3.5 py-1 rounded-full border shadow-xs backdrop-blur-xs"
+                className="text-[10px] uppercase tracking-widest font-semibold px-2.5 py-0.5 rounded-full border shadow-xs"
                 style={{
                   color: product.accent,
                   backgroundColor: product.accentBg,
@@ -898,102 +898,101 @@ function ProductQuickViewModal({
               >
                 {product.tag}
               </span>
-              <span className="text-xs font-mono text-ink/75 bg-cream/90 backdrop-blur px-2.5 py-1 rounded-md border border-ink/10 shadow-xs font-medium">
+              <span className="text-[11px] font-mono text-ink/75 bg-cream/90 px-2 py-0.5 rounded-md border border-ink/10 shadow-xs font-medium">
                 {product.crispness}
               </span>
             </div>
 
-            {/* Big Hero Image Container */}
-            <div className="relative my-4 w-full flex-1 flex items-center justify-center">
-              <div className="relative w-full h-full min-h-[260px] md:min-h-[380px] rounded-2xl overflow-hidden shadow-2xl border border-ink/10 bg-cream/50 group">
-                <img
-                  src={product.img}
-                  alt={`Frezz Drezz ${product.name}`}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent pointer-events-none opacity-40" />
-              </div>
+            {/* Product Image */}
+            <div className="relative my-3 w-full aspect-[4/5] max-w-[220px] md:max-w-[240px] rounded-2xl overflow-hidden shadow-xl border border-ink/10 bg-cream/50 group">
+              <img
+                src={product.img}
+                alt={`Frezz Drezz ${product.name}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
             </div>
 
             {/* Bottom Ingredient Badge */}
-            <div className="flex items-center justify-center gap-2 text-xs font-mono text-ink/80 bg-cream/85 backdrop-blur px-4 py-2 rounded-full border border-ink/10 shadow-xs z-10 text-center">
-              <ShieldCheck className="size-4 text-gold-deep shrink-0" />
+            <div className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-ink/80 bg-cream/90 px-3 py-1 rounded-full border border-ink/10 shadow-xs z-10 text-center w-full max-w-[240px]">
+              <ShieldCheck className="size-3.5 text-gold-deep shrink-0" />
               <span className="truncate">{product.ingredients}</span>
             </div>
           </div>
 
-          {/* Right Column: Flavor Breakdown & WhatsApp Configurator (6 of 12 cols on desktop) */}
-          <div className="md:col-span-6 p-6 md:p-8 flex flex-col justify-between bg-cream">
+          {/* Right Column: Flavor Breakdown & WhatsApp Configurator (7 cols) */}
+          <div className="md:col-span-7 p-5 md:p-6 flex flex-col justify-between bg-cream">
             <div>
               <DialogHeader className="text-left">
-                <DialogTitle className="font-display text-3xl md:text-4xl text-ink">
+                <DialogTitle className="font-display text-2xl md:text-3xl text-ink">
                   {product.name}
                 </DialogTitle>
-                <DialogDescription className="font-serif text-ink/75 mt-1.5 text-base leading-relaxed">
+                <DialogDescription className="font-serif text-ink/75 text-xs md:text-sm mt-1 leading-relaxed">
                   {product.flavorNote}
                 </DialogDescription>
               </DialogHeader>
 
-              {/* Nutrition & Specs */}
-              <div className="mt-4 space-y-2 border-y border-ink/10 py-3.5">
-                <div className="flex justify-between text-xs">
-                  <span className="text-ink/60">Taste Profile:</span>
-                  <span className="font-medium text-ink">{product.sweetness}</span>
+              {/* Nutrition & Specs Grid */}
+              <div className="mt-3 grid grid-cols-3 gap-2 border-y border-ink/10 py-2.5 text-center">
+                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
+                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Taste</div>
+                  <div className="font-medium text-ink text-xs truncate mt-0.5">
+                    {product.sweetness}
+                  </div>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-ink/60">Crunch Factor:</span>
-                  <span className="font-medium text-gold-deep">{product.crispness}</span>
+                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
+                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Crunch</div>
+                  <div className="font-medium text-gold-deep text-xs truncate mt-0.5">
+                    {product.crispness}
+                  </div>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-ink/60">Net Weight:</span>
-                  <span className="font-medium text-ink">{product.netWeight}</span>
-                </div>
-
-                <div className="pt-2">
-                  <span className="text-[11px] uppercase tracking-wider text-ink/50 font-semibold block mb-1.5">
-                    Nutritional Highlights:
-                  </span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {product.nutrients.map((n) => (
-                      <span
-                        key={n}
-                        className="text-[11px] bg-butter px-2.5 py-0.5 rounded-full text-ink font-medium border border-gold/30"
-                      >
-                        {n}
-                      </span>
-                    ))}
+                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
+                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Weight</div>
+                  <div className="font-medium text-ink text-xs truncate mt-0.5">
+                    {product.netWeight.split(" ")[0]}
                   </div>
                 </div>
               </div>
 
-              {/* Redesigned Luxury Quantity Selector with Stepper and Horizontal Pack Chips */}
-              <div className="mt-4">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-xs uppercase tracking-wider text-ink/60 font-semibold">
+              {/* Nutritional Highlights */}
+              <div className="mt-2.5 flex flex-wrap gap-1">
+                {product.nutrients.map((n) => (
+                  <span
+                    key={n}
+                    className="text-[10px] bg-butter/60 px-2 py-0.5 rounded-full text-ink font-medium border border-gold/30"
+                  >
+                    {n}
+                  </span>
+                ))}
+              </div>
+
+              {/* Luxury Quantity Selector */}
+              <div className="mt-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-[11px] uppercase tracking-wider text-ink/60 font-semibold">
                     Select Quantity:
                   </label>
                   <span className="text-xs font-serif font-medium text-gold-deep">
                     {quantity === 1
                       ? "Single Taster"
                       : quantity === 2
-                        ? "Duo Pack (Most Popular)"
+                        ? "Duo Pack (Popular)"
                         : quantity === 3
                           ? "Trio Pack"
-                          : `${quantity} Pouches Bundle`}
+                          : `${quantity} Pouches`}
                   </span>
                 </div>
 
                 {/* Interactive Stepper */}
-                <div className="flex items-center gap-3 bg-butter/40 border border-ink/10 rounded-2xl p-1.5 mb-2.5">
+                <div className="flex items-center gap-2 bg-butter/40 border border-ink/10 rounded-xl p-1 mb-2">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer"
+                    className="size-8 rounded-lg bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer text-sm"
                     aria-label="Decrease quantity"
                   >
                     −
                   </button>
-                  <div className="flex-1 text-center font-display text-lg text-ink font-semibold">
+                  <div className="flex-1 text-center font-display text-base text-ink font-semibold">
                     {quantity}{" "}
                     <span className="text-xs font-sans text-ink/60 font-normal">
                       {quantity === 1 ? "Pouch" : "Pouches"}
@@ -1002,28 +1001,28 @@ function ProductQuickViewModal({
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer"
+                    className="size-8 rounded-lg bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer text-sm"
                     aria-label="Increase quantity"
                   >
                     +
                   </button>
                 </div>
 
-                {/* Quick Pack Presets (unwrapped, elegant chips) */}
-                <div className="grid grid-cols-4 gap-1.5">
+                {/* Quick Pack Presets */}
+                <div className="grid grid-cols-4 gap-1">
                   {[
                     { q: 1, label: "1 Pouch" },
                     { q: 2, label: "2 Pack", badge: "★" },
                     { q: 3, label: "3 Pack" },
-                    { q: 5, label: "5 Bundle" },
+                    { q: 5, label: "5 Pack" },
                   ].map((preset) => (
                     <button
                       key={preset.q}
                       type="button"
                       onClick={() => setQuantity(preset.q)}
-                      className={`py-2 px-1 rounded-xl text-[11px] font-semibold tracking-tight transition-all duration-200 text-center relative cursor-pointer ${
+                      className={`py-1.5 px-1 rounded-lg text-[11px] font-semibold tracking-tight transition-all duration-200 text-center cursor-pointer ${
                         quantity === preset.q
-                          ? "bg-ink text-cream shadow-sm"
+                          ? "bg-ink text-cream shadow-xs"
                           : "bg-cream border border-ink/10 text-ink/75 hover:bg-butter hover:text-ink"
                       }`}
                     >
@@ -1038,21 +1037,21 @@ function ProductQuickViewModal({
             </div>
 
             {/* Actions */}
-            <div className="mt-5 pt-3 border-t border-ink/10 flex flex-col gap-2">
+            <div className="mt-4 pt-3 border-t border-ink/10 flex flex-col gap-1.5">
               <a
                 href={waUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-primary w-full justify-center text-sm !py-3 shadow-md cursor-pointer"
+                className="btn-primary w-full justify-center text-xs !py-2.5 shadow-md cursor-pointer"
               >
-                <MessageCircle className="size-4" />
+                <MessageCircle className="size-3.5" />
                 Order {quantity} {quantity === 1 ? "Pouch" : "Pouches"} on WhatsApp
               </a>
               <button
                 onClick={handleCopyMessage}
-                className="flex items-center justify-center gap-2 py-1.5 text-xs font-medium text-ink/70 hover:text-ink transition cursor-pointer"
+                className="flex items-center justify-center gap-1.5 py-1 text-[11px] font-medium text-ink/70 hover:text-ink transition cursor-pointer"
               >
-                <Copy className="size-3.5" />
+                <Copy className="size-3" />
                 Copy Order Text
               </button>
             </div>
