@@ -161,107 +161,48 @@ const foundersData = [
 
 const craftPhases = [
   { threshold: 0, text: "Selecting peak-harvest orchard fruit..." },
-  { threshold: 24, text: "Flash freezing whole at −40°C..." },
-  { threshold: 52, text: "Sublimating moisture under deep vacuum..." },
-  { threshold: 78, text: "Locking 100% natural crunch & 97% nutrients..." },
-  { threshold: 96, text: "Pure craft ready to experience." },
+  { threshold: 22, text: "Flash freezing whole at −40°C..." },
+  { threshold: 48, text: "Sublimating moisture under deep vacuum..." },
+  { threshold: 74, text: "Locking 100% natural crunch & 97% nutrients..." },
+  { threshold: 94, text: "Pure craft ready to experience." },
 ];
 
 function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
-  const [progress, setProgress] = useState(0);
-  const [assetsReady, setAssetsReady] = useState(false);
+  // Start immediately at 8% so user gets instant visual confirmation that progress is live
+  const [progress, setProgress] = useState(8);
 
-  // Asset preloading engine
-  useEffect(() => {
-    let isCancelled = false;
-    const criticalImages = [
-      "/assets/pineapple.jpg",
-      "/assets/banana.jpg",
-      "/assets/strawberry.jpg",
-      "/assets/kiwi.jpg",
-      "/assets/apple.jpg",
-      "/assets/founders.jpg",
-    ];
-
-    let loadedCount = 0;
-    const totalAssets = criticalImages.length + 1; // +1 for fonts
-
-    const markLoaded = () => {
-      if (isCancelled) return;
-      loadedCount++;
-      if (loadedCount >= totalAssets) {
-        setAssetsReady(true);
-      }
-    };
-
-    // Preload fonts
-    if (typeof document !== "undefined" && "fonts" in document) {
-      document.fonts.ready.then(markLoaded).catch(markLoaded);
-    } else {
-      markLoaded();
-    }
-
-    // Preload critical images
-    criticalImages.forEach((src) => {
-      const img = new Image();
-      img.src = src;
-      if (img.complete) {
-        markLoaded();
-      } else {
-        img.onload = markLoaded;
-        img.onerror = markLoaded;
-      }
-    });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
-
-  // Smooth progress calculation & spring ticker
   useEffect(() => {
     let cancelled = false;
-    const startTime = Date.now();
-    const minDuration = 1600; // minimum duration to display artisan craft aesthetic
-    const maxDuration = 3200; // fallback upper bound
+    const startTime = performance.now();
+    const duration = 1600; // 1.6s silky smooth luxury load
 
-    const interval = requestAnimationFrame(function step() {
+    const step = (now: number) => {
       if (cancelled) return;
-      const elapsed = Date.now() - startTime;
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
 
-      let targetProgress = 0;
-      if (assetsReady) {
-        targetProgress = Math.min(100, Math.round((elapsed / minDuration) * 100));
+      // Smooth custom ease-out cubic curve with initial kick
+      const eased = 0.08 + 0.92 * (1 - Math.pow(1 - t, 3));
+      const current = Math.min(100, Math.round(eased * 100));
+      setProgress(current);
+
+      if (t < 1) {
+        requestAnimationFrame(step);
       } else {
-        // Slow down near 85% until assets are confirmed ready
-        const naturalT = Math.min(0.85, elapsed / maxDuration);
-        targetProgress = Math.round(naturalT * 100);
-      }
-
-      setProgress((prev) => {
-        const next = Math.max(prev, Math.min(100, targetProgress));
-        return next;
-      });
-
-      if (elapsed >= minDuration && assetsReady && targetProgress >= 100) {
-        setTimeout(() => {
-          if (!cancelled) onFinish();
-        }, 220);
-      } else if (elapsed >= maxDuration) {
         setProgress(100);
         setTimeout(() => {
           if (!cancelled) onFinish();
-        }, 150);
-      } else {
-        requestAnimationFrame(step);
+        }, 180);
       }
-    });
+    };
+
+    const animId = requestAnimationFrame(step);
 
     return () => {
       cancelled = true;
-      cancelAnimationFrame(interval);
+      cancelAnimationFrame(animId);
     };
-  }, [assetsReady, onFinish]);
+  }, [onFinish]);
 
   // Current craftsmanship message
   const currentStatus = useMemo(() => {
@@ -280,7 +221,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       exit={{
         opacity: 0,
         scale: 1.02,
-        transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
       }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream px-6 select-none overflow-hidden"
     >
@@ -291,13 +232,13 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       <div className="relative z-10 flex flex-col items-center max-w-md w-full">
         {/* Animated Brand Emblem */}
         <motion.div
-          initial={{ scale: 0.8, opacity: 0, rotate: -20 }}
-          animate={{ scale: 1, opacity: 1, rotate: 0 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          initial={{ scale: 0.85, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           className="relative mb-6"
         >
           {/* Outer rotating crystal ring */}
-          <div className="size-20 rounded-full border border-gold/40 flex items-center justify-center bg-butter/30 shadow-lg shadow-gold/10">
+          <div className="size-20 rounded-full border border-gold/40 flex items-center justify-center bg-butter/40 shadow-lg shadow-gold/15">
             <svg viewBox="0 0 100 100" className="size-14 text-gold-deep animate-spin-slow">
               <path
                 d="M50 5 L53 35 L68 18 L58 45 L85 35 L62 55 L95 50 L65 65 L85 82 L58 70 L68 95 L50 75 L32 95 L42 70 L15 82 L35 65 L5 50 L38 55 L15 35 L42 45 L32 18 L47 35 Z"
@@ -305,7 +246,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
                 opacity="0.9"
               />
             </svg>
-            <div className="absolute size-3 rounded-full bg-cream border border-gold-deep" />
+            <div className="absolute size-3.5 rounded-full bg-cream border-2 border-gold-deep" />
           </div>
         </motion.div>
 
@@ -313,8 +254,8 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="inline-flex items-center gap-1.5 rounded-full bg-butter/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-deep border border-gold/30 mb-3"
+          transition={{ delay: 0.05, duration: 0.4 }}
+          className="inline-flex items-center gap-1.5 rounded-full bg-butter/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-deep border border-gold/30 mb-3"
         >
           <Sparkles className="size-3" />
           <span>Pure Fruit Craft</span>
@@ -324,7 +265,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
+          transition={{ delay: 0.1, duration: 0.5 }}
           className="font-display text-4xl sm:text-5xl tracking-tight text-ink text-center"
         >
           Frezz<span className="text-gold-deep italic font-serif ml-1">Drezz</span>
@@ -334,7 +275,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
+          transition={{ delay: 0.15, duration: 0.5 }}
           className="mt-2 text-xs uppercase tracking-[0.25em] text-ink/65 font-medium text-center font-sans"
         >
           Pure by Nature · Crisp by Craft
@@ -342,16 +283,19 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
         {/* Progress Bar Container */}
         <div className="mt-8 w-full max-w-[280px] flex flex-col items-center gap-3">
-          <div className="w-full h-1.5 bg-ink/10 rounded-full overflow-hidden p-0.5 relative">
+          <div className="w-full h-2 bg-ink/10 rounded-full overflow-hidden p-0.5 relative shadow-inner">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-deep"
+              className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-deep relative"
               style={{ width: `${progress}%` }}
-              transition={{ ease: "easeOut", duration: 0.1 }}
+              transition={{ ease: "easeOut", duration: 0.05 }}
             />
           </div>
 
-          <div className="flex items-center justify-between w-full text-[11px] font-mono text-ink/60 font-medium">
-            <span className="tracking-wider">CRUNCH ENGINE</span>
+          <div className="flex items-center justify-between w-full text-[11px] font-mono text-ink/65 font-medium">
+            <span className="tracking-wider flex items-center gap-1.5">
+              <span className="size-1.5 rounded-full bg-gold-deep animate-ping" />
+              CRUNCH ENGINE
+            </span>
             <span className="font-semibold text-gold-deep">{progress}%</span>
           </div>
 
@@ -360,10 +304,10 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
             <AnimatePresence mode="wait">
               <motion.p
                 key={currentStatus}
-                initial={{ opacity: 0, y: 4 }}
+                initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -3 }}
+                transition={{ duration: 0.2 }}
                 className="text-xs font-serif italic text-ink/75 text-center"
               >
                 {currentStatus}
@@ -545,12 +489,12 @@ function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
     v.addEventListener("ended", onEnded);
     v.addEventListener("error", onError);
 
-    // Prompt immediate play
+    // Prompt immediate play for smooth looping
     v.play().catch(() => {
       setVideoVisible(true);
     });
 
-    const fallbackTimeout = setTimeout(() => setVideoVisible(true), 1500);
+    const fallbackTimeout = setTimeout(() => setVideoVisible(true), 1200);
 
     return () => {
       clearTimeout(fallbackTimeout);
@@ -565,11 +509,11 @@ function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
       id="top"
       className="relative min-h-[92vh] md:min-h-screen overflow-hidden flex items-center bg-cream"
     >
-      {/* Video layer */}
+      {/* Looping video layer */}
       <div className="absolute inset-0">
         <video
           ref={videoRef}
-          src="/assets/logo-animation.mp4"
+          src="/assets/upscaled-video.mp4"
           muted
           autoPlay
           loop
@@ -578,8 +522,8 @@ function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
           className="w-full h-full object-cover transition-opacity duration-700"
           style={{ opacity: videoVisible ? 0.95 : 0 }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/15 via-cream/45 to-cream" />
-        <div className="absolute inset-0 bg-radial from-transparent via-cream/30 to-cream" />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/20 via-cream/50 to-cream" />
+        <div className="absolute inset-0 bg-radial from-transparent via-cream/35 to-cream" />
       </div>
 
       {/* Hero content - synchronized immediate entrance without 2.2s blank gap */}
@@ -800,7 +744,7 @@ function ProductCard({
       </div>
 
       {/* Top details & badges */}
-      <div className="relative p-6 flex items-start justify-between z-10">
+      <div className="relative p-6 pb-2 flex items-start justify-between z-10">
         <div>
           <span
             className="text-[10px] uppercase tracking-[0.25em] font-semibold px-2.5 py-1 rounded-full border"
@@ -815,35 +759,36 @@ function ProductCard({
           <h3 className="mt-2 text-3xl text-ink font-display">{p.name}</h3>
         </div>
         <div className="text-right">
-          <span className="text-[11px] font-mono text-ink/60 bg-cream/70 px-2 py-0.5 rounded-md border border-ink/10">
+          <span className="text-[11px] font-mono text-ink/60 bg-cream/80 px-2 py-0.5 rounded-md border border-ink/10">
             {p.crispness}
           </span>
         </div>
       </div>
 
-      {/* Image container with subtle parallax */}
+      {/* Luxury Framed Image Container - Fills beautifully without awkward white margins */}
       <div
-        className="relative aspect-[4/4] overflow-hidden cursor-pointer my-2"
+        className="relative aspect-[4/5] overflow-hidden cursor-pointer mx-3.5 mt-2 rounded-2xl border border-ink/10 shadow-md bg-butter/20 group-hover:shadow-xl transition-all duration-500"
         onClick={onQuickView}
       >
-        <div className="absolute inset-0 h-[115%] w-full transition-transform duration-700 group-hover:scale-108">
-          <motion.img
-            src={p.img}
-            alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
-            style={{ y }}
-            className="w-full h-full object-contain p-4 drop-shadow-md"
-          />
-        </div>
+        <motion.img
+          src={p.img}
+          alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
+          style={{ y }}
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-106"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
       </div>
 
       {/* Bottom info & actions */}
-      <div className="relative p-6 pt-2 z-10 flex flex-col gap-3">
-        <p className="text-xs text-ink/70 font-serif line-clamp-2">{p.flavorNote}</p>
+      <div className="relative p-6 pt-4 z-10 flex flex-col gap-3">
+        <p className="text-xs text-ink/75 font-serif line-clamp-2 leading-relaxed">
+          {p.flavorNote}
+        </p>
 
-        <div className="flex items-center gap-2 pt-2">
+        <div className="flex items-center gap-2 pt-1">
           <button
             onClick={onQuickView}
-            className="flex-1 rounded-full border border-ink/20 bg-cream/60 py-2.5 text-xs font-semibold text-ink hover:bg-cream hover:border-ink/40 transition active:scale-98"
+            className="flex-1 rounded-full border border-ink/20 bg-cream/70 py-2.5 text-xs font-semibold text-ink hover:bg-cream hover:border-ink/40 transition active:scale-98 shadow-sm"
           >
             Taste &amp; Info
           </button>
@@ -851,7 +796,7 @@ function ProductCard({
             href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-ink text-cream py-2.5 text-xs font-semibold transition-all duration-300 hover:bg-gold-deep hover:shadow-lg hover:shadow-gold-deep/20 active:scale-98"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-ink text-cream py-2.5 text-xs font-semibold transition-all duration-300 hover:bg-gold-deep hover:shadow-lg hover:shadow-gold-deep/20 active:scale-98 shadow-sm"
           >
             <MessageCircle className="size-3.5" />
             Buy Now
@@ -898,14 +843,14 @@ function ProductQuickViewModal({
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl bg-cream border-gold/30 p-0 overflow-hidden rounded-3xl">
         <div className="grid md:grid-cols-2">
-          {/* Left: Product Artwork & Palette */}
+          {/* Left: Beautifully Sized Product Artwork */}
           <div
-            className="p-8 flex flex-col items-center justify-center relative overflow-hidden"
+            className="p-6 md:p-8 flex flex-col items-center justify-between relative overflow-hidden rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none min-h-[340px]"
             style={{
               background: `radial-gradient(circle at center, ${product.tint} 0%, var(--cream) 90%)`,
             }}
           >
-            <div className="absolute top-4 left-4">
+            <div className="w-full flex items-center justify-between z-10">
               <span
                 className="text-[10px] uppercase tracking-widest font-semibold px-3 py-1 rounded-full border"
                 style={{
@@ -916,24 +861,27 @@ function ProductQuickViewModal({
               >
                 {product.tag}
               </span>
+              <span className="text-[11px] font-mono text-ink/60 bg-cream/80 px-2 py-0.5 rounded-md border border-ink/10">
+                {product.crispness}
+              </span>
             </div>
-            <img
-              src={product.img}
-              alt={product.name}
-              className="max-h-64 object-contain drop-shadow-xl my-4"
-            />
-            <div className="flex items-center gap-2 text-xs font-mono text-ink/70">
+
+            <div className="relative w-full aspect-[4/5] max-w-[260px] my-3 rounded-2xl overflow-hidden shadow-xl border border-ink/10 bg-cream">
+              <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-mono text-ink/75 bg-cream/70 px-3 py-1 rounded-full border border-ink/10 z-10">
               <ShieldCheck className="size-3.5 text-gold-deep" />
               <span>{product.ingredients}</span>
             </div>
           </div>
 
-          {/* Right: Flavor Breakdown & WhatsApp Configurator */}
+          {/* Right: Flavor Breakdown & Luxury WhatsApp Configurator */}
           <div className="p-6 md:p-8 flex flex-col justify-between max-h-[85vh] overflow-y-auto">
             <div>
               <DialogHeader className="text-left">
                 <DialogTitle className="font-display text-3xl text-ink">{product.name}</DialogTitle>
-                <DialogDescription className="font-serif text-ink/70 mt-1">
+                <DialogDescription className="font-serif text-ink/70 mt-1 leading-relaxed">
                   {product.flavorNote}
                 </DialogDescription>
               </DialogHeader>
@@ -970,23 +918,71 @@ function ProductQuickViewModal({
                 </div>
               </div>
 
-              {/* Quantity selector */}
+              {/* Redesigned Luxury Quantity Selector with Stepper and Horizontal Pack Chips */}
               <div className="mt-4">
-                <label className="text-xs uppercase tracking-wider text-ink/60 font-semibold block mb-2">
-                  Select Quantity:
-                </label>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 5].map((q) => (
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs uppercase tracking-wider text-ink/60 font-semibold">
+                    Select Quantity:
+                  </label>
+                  <span className="text-xs font-serif font-medium text-gold-deep">
+                    {quantity === 1
+                      ? "Single Taster"
+                      : quantity === 2
+                        ? "Duo Pack (Most Popular)"
+                        : quantity === 3
+                          ? "Trio Pack"
+                          : `${quantity} Pouches Bundle`}
+                  </span>
+                </div>
+
+                {/* Interactive Stepper */}
+                <div className="flex items-center gap-3 bg-butter/40 border border-ink/10 rounded-2xl p-1.5 mb-3">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <div className="flex-1 text-center font-display text-lg text-ink font-semibold">
+                    {quantity}{" "}
+                    <span className="text-xs font-sans text-ink/60 font-normal">
+                      {quantity === 1 ? "Pouch" : "Pouches"}
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Quick Pack Presets (unwrapped, elegant chips) */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {[
+                    { q: 1, label: "1 Pouch" },
+                    { q: 2, label: "2 Pack", badge: "★" },
+                    { q: 3, label: "3 Pack" },
+                    { q: 5, label: "5 Bundle" },
+                  ].map((preset) => (
                     <button
-                      key={q}
-                      onClick={() => setQuantity(q)}
-                      className={`flex-1 py-1.5 rounded-xl text-xs font-semibold transition ${
-                        quantity === q
+                      key={preset.q}
+                      type="button"
+                      onClick={() => setQuantity(preset.q)}
+                      className={`py-2 px-1 rounded-xl text-[11px] font-semibold tracking-tight transition-all duration-200 text-center relative ${
+                        quantity === preset.q
                           ? "bg-ink text-cream shadow-sm"
-                          : "bg-butter/50 border border-ink/10 text-ink hover:bg-butter"
+                          : "bg-cream border border-ink/10 text-ink/75 hover:bg-butter hover:text-ink"
                       }`}
                     >
-                      {q} {q === 1 ? "Pouch" : "Pouches"}
+                      <span>{preset.label}</span>
+                      {preset.badge && (
+                        <span className="ml-0.5 text-gold text-[10px]">{preset.badge}</span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -999,7 +995,7 @@ function ProductQuickViewModal({
                 href={waUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-primary w-full justify-center text-sm !py-3"
+                className="btn-primary w-full justify-center text-sm !py-3 shadow-md"
               >
                 <MessageCircle className="size-4" />
                 Order {quantity} {quantity === 1 ? "Pouch" : "Pouches"} on WhatsApp
