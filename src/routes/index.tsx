@@ -821,15 +821,18 @@ function ProductCard({
         <div className="flex items-center gap-2 pt-1">
           <button
             onClick={onQuickView}
-            className="flex-1 rounded-full border border-ink/20 bg-cream/70 py-2.5 text-xs font-semibold text-ink hover:bg-cream hover:border-ink/40 transition active:scale-98 shadow-sm"
+            className="group/btn relative overflow-hidden flex-1 rounded-full border border-ink/20 bg-cream/90 py-2.5 px-3 text-xs font-semibold text-ink transition-all duration-300 hover:border-gold-deep hover:bg-gold/15 hover:text-ink hover:shadow-md hover:shadow-gold-deep/10 active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
           >
-            Taste &amp; Info
+            {/* Shimmer sweep effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 ease-out bg-gradient-to-r from-transparent via-gold/30 to-transparent pointer-events-none" />
+            <Sparkles className="size-3.5 text-gold-deep transition-transform duration-300 group-hover/btn:scale-125 group-hover/btn:rotate-12" />
+            <span className="relative z-10 transition-colors duration-300">Taste &amp; Info</span>
           </button>
           <a
             href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-ink text-cream py-2.5 text-xs font-semibold transition-all duration-300 hover:bg-gold-deep hover:shadow-lg hover:shadow-gold-deep/20 active:scale-98 shadow-sm"
+            className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-ink text-cream py-2.5 text-xs font-semibold transition-all duration-300 hover:bg-gold-deep hover:shadow-lg hover:shadow-gold-deep/20 active:scale-98 shadow-sm cursor-pointer"
           >
             <MessageCircle className="size-3.5" />
             Buy Now
@@ -874,18 +877,19 @@ function ProductQuickViewModal({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl bg-cream border-gold/30 p-0 overflow-hidden rounded-3xl">
-        <div className="grid md:grid-cols-2">
-          {/* Left: Beautifully Sized Product Artwork */}
+      <DialogContent className="max-w-3xl md:max-w-4xl bg-cream border-gold/30 p-0 overflow-hidden rounded-[2rem] shadow-2xl">
+        <div className="grid md:grid-cols-12 min-h-[500px]">
+          {/* Left Column: Big, Majestic Product Artwork Showcase (5 of 12 cols on desktop) */}
           <div
-            className="p-6 md:p-8 flex flex-col items-center justify-between relative overflow-hidden rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none min-h-[340px]"
+            className="md:col-span-6 relative p-6 md:p-7 flex flex-col justify-between overflow-hidden bg-butter/30 rounded-t-[2rem] md:rounded-l-[2rem] md:rounded-tr-none min-h-[380px] md:min-h-[540px]"
             style={{
-              background: `radial-gradient(circle at center, ${product.tint} 0%, var(--cream) 90%)`,
+              background: `radial-gradient(circle at center, ${product.tint} 0%, var(--cream) 100%)`,
             }}
           >
+            {/* Top Badges */}
             <div className="w-full flex items-center justify-between z-10">
               <span
-                className="text-[10px] uppercase tracking-widest font-semibold px-3 py-1 rounded-full border"
+                className="text-[11px] uppercase tracking-widest font-semibold px-3.5 py-1 rounded-full border shadow-xs backdrop-blur-xs"
                 style={{
                   color: product.accent,
                   backgroundColor: product.accentBg,
@@ -894,33 +898,44 @@ function ProductQuickViewModal({
               >
                 {product.tag}
               </span>
-              <span className="text-[11px] font-mono text-ink/60 bg-cream/80 px-2 py-0.5 rounded-md border border-ink/10">
+              <span className="text-xs font-mono text-ink/75 bg-cream/90 backdrop-blur px-2.5 py-1 rounded-md border border-ink/10 shadow-xs font-medium">
                 {product.crispness}
               </span>
             </div>
 
-            <div className="relative w-full aspect-[4/5] max-w-[260px] my-3 rounded-2xl overflow-hidden shadow-xl border border-ink/10 bg-cream">
-              <img src={product.img} alt={product.name} className="w-full h-full object-cover" />
+            {/* Big Hero Image Container */}
+            <div className="relative my-4 w-full flex-1 flex items-center justify-center">
+              <div className="relative w-full h-full min-h-[260px] md:min-h-[380px] rounded-2xl overflow-hidden shadow-2xl border border-ink/10 bg-cream/50 group">
+                <img
+                  src={product.img}
+                  alt={`Frezz Drezz ${product.name}`}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent pointer-events-none opacity-40" />
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-mono text-ink/75 bg-cream/70 px-3 py-1 rounded-full border border-ink/10 z-10">
-              <ShieldCheck className="size-3.5 text-gold-deep" />
-              <span>{product.ingredients}</span>
+            {/* Bottom Ingredient Badge */}
+            <div className="flex items-center justify-center gap-2 text-xs font-mono text-ink/80 bg-cream/85 backdrop-blur px-4 py-2 rounded-full border border-ink/10 shadow-xs z-10 text-center">
+              <ShieldCheck className="size-4 text-gold-deep shrink-0" />
+              <span className="truncate">{product.ingredients}</span>
             </div>
           </div>
 
-          {/* Right: Flavor Breakdown & Luxury WhatsApp Configurator */}
-          <div className="p-6 md:p-8 flex flex-col justify-between max-h-[85vh] overflow-y-auto">
+          {/* Right Column: Flavor Breakdown & WhatsApp Configurator (6 of 12 cols on desktop) */}
+          <div className="md:col-span-6 p-6 md:p-8 flex flex-col justify-between bg-cream">
             <div>
               <DialogHeader className="text-left">
-                <DialogTitle className="font-display text-3xl text-ink">{product.name}</DialogTitle>
-                <DialogDescription className="font-serif text-ink/70 mt-1 leading-relaxed">
+                <DialogTitle className="font-display text-3xl md:text-4xl text-ink">
+                  {product.name}
+                </DialogTitle>
+                <DialogDescription className="font-serif text-ink/75 mt-1.5 text-base leading-relaxed">
                   {product.flavorNote}
                 </DialogDescription>
               </DialogHeader>
 
               {/* Nutrition & Specs */}
-              <div className="mt-4 space-y-2 border-y border-ink/10 py-4">
+              <div className="mt-4 space-y-2 border-y border-ink/10 py-3.5">
                 <div className="flex justify-between text-xs">
                   <span className="text-ink/60">Taste Profile:</span>
                   <span className="font-medium text-ink">{product.sweetness}</span>
@@ -969,11 +984,11 @@ function ProductQuickViewModal({
                 </div>
 
                 {/* Interactive Stepper */}
-                <div className="flex items-center gap-3 bg-butter/40 border border-ink/10 rounded-2xl p-1.5 mb-3">
+                <div className="flex items-center gap-3 bg-butter/40 border border-ink/10 rounded-2xl p-1.5 mb-2.5">
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition"
+                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer"
                     aria-label="Decrease quantity"
                   >
                     −
@@ -987,7 +1002,7 @@ function ProductQuickViewModal({
                   <button
                     type="button"
                     onClick={() => setQuantity((q) => q + 1)}
-                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition"
+                    className="size-9 rounded-xl bg-cream border border-ink/15 flex items-center justify-center text-ink font-bold hover:bg-gold hover:text-ink active:scale-95 transition cursor-pointer"
                     aria-label="Increase quantity"
                   >
                     +
@@ -1006,7 +1021,7 @@ function ProductQuickViewModal({
                       key={preset.q}
                       type="button"
                       onClick={() => setQuantity(preset.q)}
-                      className={`py-2 px-1 rounded-xl text-[11px] font-semibold tracking-tight transition-all duration-200 text-center relative ${
+                      className={`py-2 px-1 rounded-xl text-[11px] font-semibold tracking-tight transition-all duration-200 text-center relative cursor-pointer ${
                         quantity === preset.q
                           ? "bg-ink text-cream shadow-sm"
                           : "bg-cream border border-ink/10 text-ink/75 hover:bg-butter hover:text-ink"
@@ -1023,19 +1038,19 @@ function ProductQuickViewModal({
             </div>
 
             {/* Actions */}
-            <div className="mt-6 pt-4 border-t border-ink/10 flex flex-col gap-2">
+            <div className="mt-5 pt-3 border-t border-ink/10 flex flex-col gap-2">
               <a
                 href={waUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="btn-primary w-full justify-center text-sm !py-3 shadow-md"
+                className="btn-primary w-full justify-center text-sm !py-3 shadow-md cursor-pointer"
               >
                 <MessageCircle className="size-4" />
                 Order {quantity} {quantity === 1 ? "Pouch" : "Pouches"} on WhatsApp
               </a>
               <button
                 onClick={handleCopyMessage}
-                className="flex items-center justify-center gap-2 py-2 text-xs font-medium text-ink/70 hover:text-ink transition"
+                className="flex items-center justify-center gap-2 py-1.5 text-xs font-medium text-ink/70 hover:text-ink transition cursor-pointer"
               >
                 <Copy className="size-3.5" />
                 Copy Order Text
