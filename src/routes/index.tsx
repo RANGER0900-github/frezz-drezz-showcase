@@ -37,6 +37,11 @@ export const Route = createFileRoute("/")({
           "Freeze-dried fruit made from 100% real fruit. No added sugar. No preservatives. Just pure crunch.",
       },
     ],
+    links: [
+      { rel: "preload", as: "video", href: "/assets/hero-loop.mp4", type: "video/mp4" },
+      { rel: "preload", as: "image", href: "/assets/pineapple.webp", type: "image/webp" },
+      { rel: "preload", as: "image", href: "/assets/banana.webp", type: "image/webp" },
+    ],
   }),
   component: Home,
 });
@@ -68,7 +73,7 @@ const products: ProductItem[] = [
     name: "Pineapple",
     tag: "Tropical Sunlit",
     category: "tropical",
-    img: "/assets/pineapple.jpg",
+    img: "/assets/pineapple.webp",
     tint: "oklch(0.88 0.13 92)",
     accent: "#C99A2E",
     accentBg: "rgba(201, 154, 46, 0.15)",
@@ -84,7 +89,7 @@ const products: ProductItem[] = [
     name: "Banana",
     tag: "Golden Cream",
     category: "tropical",
-    img: "/assets/banana.jpg",
+    img: "/assets/banana.webp",
     tint: "oklch(0.92 0.10 95)",
     accent: "#B8933A",
     accentBg: "rgba(184, 147, 58, 0.15)",
@@ -100,7 +105,7 @@ const products: ProductItem[] = [
     name: "Strawberry",
     tag: "Wild Berry",
     category: "berries-orchard",
-    img: "/assets/strawberry.jpg",
+    img: "/assets/strawberry.webp",
     tint: "oklch(0.85 0.10 15)",
     accent: "#C4436E",
     accentBg: "rgba(196, 67, 110, 0.15)",
@@ -116,7 +121,7 @@ const products: ProductItem[] = [
     name: "Kiwi",
     tag: "Fresh Verdant",
     category: "berries-orchard",
-    img: "/assets/kiwi.jpg",
+    img: "/assets/kiwi.webp",
     tint: "oklch(0.86 0.09 130)",
     accent: "#7A8F3E",
     accentBg: "rgba(122, 143, 62, 0.15)",
@@ -137,7 +142,7 @@ const products: ProductItem[] = [
     name: "Apple",
     tag: "Orchard Ruby",
     category: "berries-orchard",
-    img: "/assets/apple.jpg",
+    img: "/assets/apple.webp",
     tint: "oklch(0.80 0.14 25)",
     accent: "#B0362C",
     accentBg: "rgba(176, 54, 44, 0.15)",
@@ -156,33 +161,51 @@ const foundersData = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*                           ULTRA-LUXURY PRELOADER                           */
+/*                    LIGHTNING-FAST ULTRA-LUXURY PRELOADER                   */
 /* -------------------------------------------------------------------------- */
 
 const craftPhases = [
   { threshold: 0, text: "Selecting peak-harvest orchard fruit..." },
-  { threshold: 22, text: "Flash freezing whole at −40°C..." },
-  { threshold: 48, text: "Sublimating moisture under deep vacuum..." },
-  { threshold: 74, text: "Locking 100% natural crunch & 97% nutrients..." },
-  { threshold: 94, text: "Pure craft ready to experience." },
+  { threshold: 25, text: "Flash freezing whole at −40°C..." },
+  { threshold: 50, text: "Sublimating moisture under deep vacuum..." },
+  { threshold: 75, text: "Locking 100% natural crunch & 97% nutrients..." },
+  { threshold: 92, text: "Pure craft ready to experience." },
 ];
 
 function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
-  // Start immediately at 8% so user gets instant visual confirmation that progress is live
-  const [progress, setProgress] = useState(8);
+  // Start immediately at 15% for instantaneous progression feeling
+  const [progress, setProgress] = useState(15);
 
+  // Parallel WebP asset cache warm-up
+  useEffect(() => {
+    const assets = [
+      "/assets/pineapple.webp",
+      "/assets/banana.webp",
+      "/assets/strawberry.webp",
+      "/assets/kiwi.webp",
+      "/assets/apple.webp",
+      "/assets/founders.webp",
+    ];
+
+    assets.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
+
+  // Lightning fast 850ms fluid progress curve
   useEffect(() => {
     let cancelled = false;
     const startTime = performance.now();
-    const duration = 1600; // 1.6s silky smooth luxury load
+    const duration = 850; // 850ms super snappy, responsive experience
 
     const step = (now: number) => {
       if (cancelled) return;
       const elapsed = now - startTime;
       const t = Math.min(1, elapsed / duration);
 
-      // Smooth custom ease-out cubic curve with initial kick
-      const eased = 0.08 + 0.92 * (1 - Math.pow(1 - t, 3));
+      // Fast-accelerating smooth easeOutQuart curve
+      const eased = 0.15 + 0.85 * (1 - Math.pow(1 - t, 4));
       const current = Math.min(100, Math.round(eased * 100));
       setProgress(current);
 
@@ -192,7 +215,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         setProgress(100);
         setTimeout(() => {
           if (!cancelled) onFinish();
-        }, 180);
+        }, 120);
       }
     };
 
@@ -220,8 +243,8 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       initial={{ opacity: 1 }}
       exit={{
         opacity: 0,
-        scale: 1.02,
-        transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] },
+        scale: 1.01,
+        transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
       }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream px-6 select-none overflow-hidden"
     >
@@ -232,9 +255,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       <div className="relative z-10 flex flex-col items-center max-w-md w-full">
         {/* Animated Brand Emblem */}
         <motion.div
-          initial={{ scale: 0.85, opacity: 0 }}
+          initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="relative mb-6"
         >
           {/* Outer rotating crystal ring */}
@@ -252,9 +275,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
         {/* Established badge */}
         <motion.div
-          initial={{ opacity: 0, y: 6 }}
+          initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05, duration: 0.4 }}
+          transition={{ delay: 0.05, duration: 0.3 }}
           className="inline-flex items-center gap-1.5 rounded-full bg-butter/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-deep border border-gold/30 mb-3"
         >
           <Sparkles className="size-3" />
@@ -263,9 +286,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
         {/* Brand Typography */}
         <motion.h1
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
+          transition={{ delay: 0.08, duration: 0.4 }}
           className="font-display text-4xl sm:text-5xl tracking-tight text-ink text-center"
         >
           Frezz<span className="text-gold-deep italic font-serif ml-1">Drezz</span>
@@ -275,7 +298,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.15, duration: 0.5 }}
+          transition={{ delay: 0.12, duration: 0.4 }}
           className="mt-2 text-xs uppercase tracking-[0.25em] text-ink/65 font-medium text-center font-sans"
         >
           Pure by Nature · Crisp by Craft
@@ -307,7 +330,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
                 initial={{ opacity: 0, y: 3 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.2 }}
+                transition={{ duration: 0.15 }}
                 className="text-xs font-serif italic text-ink/75 text-center"
               >
                 {currentStatus}
@@ -470,7 +493,7 @@ function Nav({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                HERO SECTION                                */
+/*                     BUTTERY SMOOTH HERO VIDEO SECTION                      */
 /* -------------------------------------------------------------------------- */
 
 function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
@@ -481,26 +504,35 @@ function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
     const v = videoRef.current;
     if (!v) return;
 
-    const onPlaying = () => setVideoVisible(true);
-    const onEnded = () => setVideoVisible(true);
-    const onError = () => setVideoVisible(true);
-
-    v.addEventListener("playing", onPlaying);
-    v.addEventListener("ended", onEnded);
-    v.addEventListener("error", onError);
-
-    // Prompt immediate play for smooth looping
-    v.play().catch(() => {
+    const startPlayback = () => {
       setVideoVisible(true);
-    });
+      const playPromise = v.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay fallback (mute guaranteed)
+          v.muted = true;
+          v.play().catch(() => {});
+        });
+      }
+    };
 
-    const fallbackTimeout = setTimeout(() => setVideoVisible(true), 1200);
+    if (v.readyState >= 2) {
+      startPlayback();
+    } else {
+      v.addEventListener("loadeddata", startPlayback, { once: true });
+      v.addEventListener("canplay", startPlayback, { once: true });
+      v.addEventListener("playing", () => setVideoVisible(true));
+    }
+
+    // Direct immediate trigger
+    startPlayback();
+
+    const fallbackTimeout = setTimeout(() => setVideoVisible(true), 600);
 
     return () => {
       clearTimeout(fallbackTimeout);
-      v.removeEventListener("playing", onPlaying);
-      v.removeEventListener("ended", onEnded);
-      v.removeEventListener("error", onError);
+      v.removeEventListener("loadeddata", startPlayback);
+      v.removeEventListener("canplay", startPlayback);
     };
   }, []);
 
@@ -509,21 +541,22 @@ function Hero({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
       id="top"
       className="relative min-h-[92vh] md:min-h-screen overflow-hidden flex items-center bg-cream"
     >
-      {/* Looping video layer */}
-      <div className="absolute inset-0">
+      {/* Optimized faststart looping video layer */}
+      <div className="absolute inset-0 overflow-hidden transform-gpu">
         <video
           ref={videoRef}
-          src="/assets/upscaled-video.mp4"
           muted
           autoPlay
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover transition-opacity duration-700"
+          className="w-full h-full object-cover will-change-transform transform-gpu transition-opacity duration-500"
           style={{ opacity: videoVisible ? 0.95 : 0 }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-cream/20 via-cream/50 to-cream" />
-        <div className="absolute inset-0 bg-radial from-transparent via-cream/35 to-cream" />
+        >
+          <source src="/assets/hero-loop.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/20 via-cream/50 to-cream pointer-events-none" />
+        <div className="absolute inset-0 bg-radial from-transparent via-cream/35 to-cream pointer-events-none" />
       </div>
 
       {/* Hero content - synchronized immediate entrance without 2.2s blank gap */}
@@ -1123,7 +1156,7 @@ function Founders() {
           <div className="absolute -inset-4 bg-gold/30 rounded-3xl -rotate-2 blur-xs" />
           <div className="relative overflow-hidden rounded-3xl border border-ink/10 shadow-xl bg-butter/30 aspect-[4/3] md:aspect-auto">
             <img
-              src="/assets/founders.jpg"
+              src="/assets/founders.webp"
               alt="Rudrax and Aditya, founders of Frezz Drezz"
               className="w-full h-full object-cover"
             />
