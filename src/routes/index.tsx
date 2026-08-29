@@ -16,6 +16,7 @@ import {
   Layers,
   MessageCircle,
   ExternalLink,
+  ZoomIn,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SmoothScroll } from "@/lib/smooth-scroll";
@@ -856,13 +857,30 @@ function ProductQuickViewModal({
 }) {
   const [quantity, setQuantity] = useState(2);
   const [customAddress, setCustomAddress] = useState("");
+  const [zoomPos, setZoomPos] = useState<{ x: number; y: number; active: boolean }>({
+    x: 50,
+    y: 50,
+    active: false,
+  });
 
   useEffect(() => {
     setQuantity(2);
     setCustomAddress("");
+    setZoomPos({ x: 50, y: 50, active: false });
   }, [product]);
 
   if (!product) return null;
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - left) / width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - top) / height) * 100));
+    setZoomPos({ x, y, active: true });
+  };
+
+  const handleMouseLeave = () => {
+    setZoomPos((prev) => ({ ...prev, active: false }));
+  };
 
   const waText = encodeURIComponent(
     `Hello Frezz Drezz! I would like to order *${product.name}* freeze-dried fruit 🍃\n\n• Flavor: ${product.name} (${product.tag})\n• Quantity: ${quantity} pouch(es)\n• Address: ${customAddress || "[Please deliver to my address]"}\n\nPlease share payment details and dispatch time!`,
@@ -879,7 +897,7 @@ function ProductQuickViewModal({
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-3xl bg-cream border-gold/30 p-0 overflow-hidden rounded-3xl shadow-2xl max-h-[90vh]">
         <div className="grid md:grid-cols-12 items-stretch">
-          {/* Left Column: Focused Artwork Showcase (5 cols) */}
+          {/* Left Column: Focused Artwork Showcase with Interactive Zoom Lens (5 cols) */}
           <div
             className="md:col-span-5 relative p-5 md:p-6 flex flex-col justify-between items-center overflow-hidden bg-butter/30 rounded-t-3xl md:rounded-l-3xl md:rounded-tr-none"
             style={{
@@ -903,13 +921,30 @@ function ProductQuickViewModal({
               </span>
             </div>
 
-            {/* Product Image */}
-            <div className="relative my-3 w-full aspect-[4/5] max-w-[220px] md:max-w-[240px] rounded-2xl overflow-hidden shadow-xl border border-ink/10 bg-cream/50 group">
+            {/* Product Image with Amazon-Style Interactive Zoom Lens */}
+            <div
+              className="relative my-3 w-full aspect-[4/5] max-w-[220px] md:max-w-[240px] rounded-2xl overflow-hidden shadow-xl border border-ink/10 bg-cream/50 cursor-crosshair group select-none"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
               <img
                 src={product.img}
                 alt={`Frezz Drezz ${product.name}`}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover pointer-events-none transition-transform duration-150 ease-out"
+                style={{
+                  transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                  transform: zoomPos.active ? "scale(2.3)" : "scale(1)",
+                }}
               />
+              {/* Zoom hint badge */}
+              <div
+                className={`absolute bottom-2 right-2 flex items-center gap-1 rounded-full bg-ink/80 text-cream text-[10px] px-2 py-0.5 pointer-events-none transition-opacity duration-300 ${
+                  zoomPos.active ? "opacity-0" : "opacity-90"
+                }`}
+              >
+                <ZoomIn className="size-3 text-gold" />
+                <span>Hover to zoom</span>
+              </div>
             </div>
 
             {/* Bottom Ingredient Badge */}
@@ -931,25 +966,29 @@ function ProductQuickViewModal({
                 </DialogDescription>
               </DialogHeader>
 
-              {/* Nutrition & Specs Grid */}
-              <div className="mt-3 grid grid-cols-3 gap-2 border-y border-ink/10 py-2.5 text-center">
-                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
-                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Taste</div>
-                  <div className="font-medium text-ink text-xs truncate mt-0.5">
-                    {product.sweetness}
-                  </div>
+              {/* Untruncated, Clean Specs Breakdown */}
+              <div className="mt-3 space-y-1.5 border-y border-ink/10 py-2.5 text-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] uppercase tracking-wider text-ink/60 font-semibold shrink-0">
+                    Taste Profile
+                  </span>
+                  <span className="font-medium text-ink text-right">{product.sweetness}</span>
                 </div>
-                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
-                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Crunch</div>
-                  <div className="font-medium text-gold-deep text-xs truncate mt-0.5">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] uppercase tracking-wider text-ink/60 font-semibold shrink-0">
+                    Crunch Factor
+                  </span>
+                  <span className="font-semibold text-gold-deep text-right">
                     {product.crispness}
-                  </div>
+                  </span>
                 </div>
-                <div className="bg-butter/30 p-1.5 rounded-xl border border-ink/5">
-                  <div className="text-[10px] text-ink/60 uppercase tracking-wider">Weight</div>
-                  <div className="font-medium text-ink text-xs truncate mt-0.5">
-                    {product.netWeight.split(" ")[0]}
-                  </div>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-[11px] uppercase tracking-wider text-ink/60 font-semibold shrink-0">
+                    Net Weight
+                  </span>
+                  <span className="font-mono text-[11px] font-medium text-ink bg-butter/60 px-2 py-0.5 rounded-md border border-gold/30">
+                    {product.netWeight}
+                  </span>
                 </div>
               </div>
 
