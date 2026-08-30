@@ -265,3 +265,33 @@
 @utility pulse-soft {
   animation: pulse-soft 3s ease-in-out infinite;
 }
+
+/* Preloader Specific Animations */
+@keyframes preloader-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@utility preloader-shine {
+  animation: preloader-shine 1.4s ease-in-out infinite;
+}
+
+@keyframes preloader-flare {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@utility preloader-flare {
+  animation: preloader-flare 1s ease-in-out infinite;
+}

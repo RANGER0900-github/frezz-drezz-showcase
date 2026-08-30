@@ -167,19 +167,23 @@ const foundersData = [
 
 const craftPhases = [
   { threshold: 0, text: "Selecting peak-harvest orchard fruit..." },
-  { threshold: 25, text: "Flash freezing whole at −40°C..." },
-  { threshold: 50, text: "Sublimating moisture under deep vacuum..." },
-  { threshold: 75, text: "Locking 100% natural crunch & 97% nutrients..." },
+  { threshold: 22, text: "Flash freezing whole at −40°C..." },
+  { threshold: 48, text: "Sublimating moisture under deep vacuum..." },
+  { threshold: 72, text: "Locking 100% natural crunch & 97% nutrients..." },
   { threshold: 92, text: "Pure craft ready to experience." },
 ];
 
 function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
-  // Start immediately at 15% for instantaneous progression feeling
-  const [progress, setProgress] = useState(15);
+  const [progress, setProgress] = useState(0);
 
-  // Parallel WebP asset cache warm-up
   useEffect(() => {
-    const assets = [
+    let cancelled = false;
+    let currentVal = 0;
+    const startTime = performance.now();
+    const duration = 950; // 950ms snappy, ultra-smooth responsive experience
+
+    // 1. Parallel Asset Preload & Decode Warm-up
+    const criticalAssets = [
       "/assets/pineapple.webp",
       "/assets/banana.webp",
       "/assets/strawberry.webp",
@@ -188,30 +192,29 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       "/assets/founders.webp",
     ];
 
-    assets.forEach((src) => {
+    criticalAssets.forEach((src) => {
       const img = new Image();
       img.src = src;
+      if (img.decode) img.decode().catch(() => {});
     });
-  }, []);
 
-  // Lightning fast 850ms fluid progress curve
-  useEffect(() => {
-    let cancelled = false;
-    const startTime = performance.now();
-    const duration = 850; // 850ms super snappy, responsive experience
+    const testVideo = document.createElement("video");
+    testVideo.preload = "auto";
+    testVideo.src = "/assets/hero-loop.mp4";
 
-    const step = (now: number) => {
+    // 2. Smooth 60fps Eased Progression Loop
+    const animate = (now: number) => {
       if (cancelled) return;
       const elapsed = now - startTime;
       const t = Math.min(1, elapsed / duration);
 
       // Fast-accelerating smooth easeOutQuart curve
-      const eased = 0.15 + 0.85 * (1 - Math.pow(1 - t, 4));
-      const current = Math.min(100, Math.round(eased * 100));
-      setProgress(current);
+      const eased = 1 - Math.pow(1 - t, 4);
+      currentVal = Math.min(100, Math.round(eased * 100));
+      setProgress(currentVal);
 
       if (t < 1) {
-        requestAnimationFrame(step);
+        requestAnimationFrame(animate);
       } else {
         setProgress(100);
         setTimeout(() => {
@@ -220,7 +223,7 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       }
     };
 
-    const animId = requestAnimationFrame(step);
+    const animId = requestAnimationFrame(animate);
 
     return () => {
       cancelled = true;
@@ -244,8 +247,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       initial={{ opacity: 1 }}
       exit={{
         opacity: 0,
-        scale: 1.01,
-        transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+        scale: 1.02,
+        filter: "blur(4px)",
+        transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
       }}
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream px-6 select-none overflow-hidden"
     >
@@ -254,65 +258,50 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       <div className="absolute bottom-1/4 -right-20 size-96 rounded-full bg-butter/40 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center max-w-md w-full">
-        {/* Animated Brand Emblem */}
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative mb-6"
-        >
-          {/* Outer rotating crystal ring */}
-          <div className="size-20 rounded-full border border-gold/40 flex items-center justify-center bg-butter/40 shadow-lg shadow-gold/15">
+        {/* Animated Brand Emblem - Always visible from 0ms */}
+        <div className="relative mb-6">
+          {/* Outer rotating crystal ring with glowing shadow */}
+          <div className="size-20 rounded-full border border-gold/50 flex items-center justify-center bg-butter/60 shadow-xl shadow-gold/20 relative">
             <svg viewBox="0 0 100 100" className="size-14 text-gold-deep animate-spin-slow">
               <path
                 d="M50 5 L53 35 L68 18 L58 45 L85 35 L62 55 L95 50 L65 65 L85 82 L58 70 L68 95 L50 75 L32 95 L42 70 L15 82 L35 65 L5 50 L38 55 L15 35 L42 45 L32 18 L47 35 Z"
                 fill="currentColor"
-                opacity="0.9"
+                opacity="0.95"
               />
             </svg>
-            <div className="absolute size-3.5 rounded-full bg-cream border-2 border-gold-deep" />
+            <div className="absolute size-3.5 rounded-full bg-cream border-2 border-gold-deep shadow-xs" />
+            <div className="absolute -inset-1 rounded-full border border-gold/30 animate-ping opacity-30 pointer-events-none" />
           </div>
-        </motion.div>
+        </div>
 
         {/* Established badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 4 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05, duration: 0.3 }}
-          className="inline-flex items-center gap-1.5 rounded-full bg-butter/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-deep border border-gold/30 mb-3"
-        >
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-butter/90 px-3.5 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold-deep border border-gold/40 mb-3 shadow-xs">
           <Sparkles className="size-3" />
           <span>Pure Fruit Craft</span>
-        </motion.div>
+        </div>
 
         {/* Brand Typography */}
-        <motion.h1
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08, duration: 0.4 }}
-          className="font-display text-4xl sm:text-5xl tracking-tight text-ink text-center"
-        >
+        <h1 className="font-display text-4xl sm:text-5xl tracking-tight text-ink text-center">
           Frezz<span className="text-gold-deep italic font-serif ml-1">Drezz</span>
-        </motion.h1>
+        </h1>
 
         {/* Tagline */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.12, duration: 0.4 }}
-          className="mt-2 text-xs uppercase tracking-[0.25em] text-ink/65 font-medium text-center font-sans"
-        >
+        <p className="mt-2 text-xs uppercase tracking-[0.25em] text-ink/65 font-medium text-center font-sans">
           Pure by Nature · Crisp by Craft
-        </motion.p>
+        </p>
 
-        {/* Progress Bar Container */}
+        {/* High-End Progressive Loading Container */}
         <div className="mt-8 w-full max-w-[280px] flex flex-col items-center gap-3">
-          <div className="w-full h-2 bg-ink/10 rounded-full overflow-hidden p-0.5 relative shadow-inner">
-            <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-deep relative"
-              style={{ width: `${progress}%` }}
-              transition={{ ease: "easeOut", duration: 0.05 }}
-            />
+          <div className="w-full h-2.5 bg-ink/10 rounded-full overflow-hidden p-0.5 relative shadow-inner border border-gold/20">
+            {/* Animated Gradient Bar with Leading Flare and Shimmer */}
+            <div
+              id="preloader-bar"
+              className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-deep relative transition-all duration-75 ease-out overflow-hidden shadow-sm"
+              style={{ width: `${Math.max(4, progress)}%` }}
+            >
+              {/* Shimmer light sweep */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent preloader-shine pointer-events-none" />
+            </div>
           </div>
 
           <div className="flex items-center justify-between w-full text-[11px] font-mono text-ink/65 font-medium">
@@ -320,23 +309,19 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
               <span className="size-1.5 rounded-full bg-gold-deep animate-ping" />
               CRUNCH ENGINE
             </span>
-            <span className="font-semibold text-gold-deep">{progress}%</span>
+            <span id="preloader-pct" className="font-semibold text-gold-deep font-mono text-xs">
+              {progress}%
+            </span>
           </div>
 
-          {/* Dynamic Craft Phase Message */}
+          {/* Dynamic Craft Phase Message with Smooth Crossfade */}
           <div className="h-6 flex items-center justify-center">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={currentStatus}
-                initial={{ opacity: 0, y: 3 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -3 }}
-                transition={{ duration: 0.15 }}
-                className="text-xs font-serif italic text-ink/75 text-center"
-              >
-                {currentStatus}
-              </motion.p>
-            </AnimatePresence>
+            <p
+              id="preloader-craft-phase"
+              className="text-xs font-serif italic text-ink/80 text-center transition-all duration-200"
+            >
+              {currentStatus}
+            </p>
           </div>
         </div>
       </div>
