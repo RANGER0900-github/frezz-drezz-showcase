@@ -177,15 +177,27 @@ const foundersData = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*                    LIGHTNING-FAST ULTRA-LUXURY PRELOADER                   */
+/*                    TRUE FULL ASSET PRELOADER ENGINE                        */
 /* -------------------------------------------------------------------------- */
+
+const SHOWCASE_ASSETS = [
+  "/assets/logo-384.png",
+  "/assets/logo-128.png",
+  "/assets/frezz-drezz-logo.png",
+  "/assets/strawberry.webp",
+  "/assets/banana.webp",
+  "/assets/pineapple.webp",
+  "/assets/kiwi.webp",
+  "/assets/apple.webp",
+  "/assets/founders.webp",
+];
 
 const craftPhases = [
   { threshold: 0, text: "Selecting peak-harvest orchard fruit..." },
   { threshold: 22, text: "Flash freezing whole at −40°C..." },
   { threshold: 48, text: "Sublimating moisture under deep vacuum..." },
   { threshold: 72, text: "Locking 100% natural crunch & 97% nutrients..." },
-  { threshold: 92, text: "Pure craft ready to experience." },
+  { threshold: 94, text: "Pure craft ready to experience." },
 ];
 
 function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
@@ -195,45 +207,77 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
   useEffect(() => {
     let cancelled = false;
-    const startTime = performance.now();
-    const duration = 850; // Snappy, responsive 850ms load
+    let animId: number;
+    let lastPhaseIdx = 0;
+    let displayProgress = 0;
+    let targetProgress = 12;
 
-    // 1. Parallel lightweight asset warm-up (only essential small webp icons)
-    const criticalAssets = [
-      "/assets/logo-384.png",
-      "/assets/logo-128.png",
-      "/assets/pineapple.webp",
-      "/assets/banana.webp",
-    ];
+    const totalItems = SHOWCASE_ASSETS.length + 2; // 9 images + fonts + video = 11
+    let loadedItems = 0;
 
-    criticalAssets.forEach((src) => {
+    const onAssetLoaded = () => {
+      if (cancelled) return;
+      loadedItems++;
+      targetProgress = Math.min(100, Math.round((loadedItems / totalItems) * 100));
+    };
+
+    // 1. Preload and decode all showcase images into GPU memory
+    SHOWCASE_ASSETS.forEach((src) => {
       const img = new Image();
       img.src = src;
-      if (img.decode) img.decode().catch(() => {});
+      const done = () => onAssetLoaded();
+      if ("decode" in img) {
+        img.decode().then(done).catch(done);
+      } else {
+        img.onload = done;
+        img.onerror = done;
+      }
     });
 
-    let lastPhaseIdx = 0;
+    // 2. Preload web fonts
+    if ("fonts" in document) {
+      document.fonts.ready.then(() => onAssetLoaded()).catch(() => onAssetLoaded());
+    } else {
+      onAssetLoaded();
+    }
 
-    // 2. High-performance direct DOM 60fps animation (Zero React state re-render overhead)
-    const animate = (now: number) => {
+    // 3. Preload hero video buffer
+    const video = document.createElement("video");
+    video.src = "/assets/hero-loop-720p.mp4";
+    video.preload = "auto";
+    video.muted = true;
+    video.playsInline = true;
+    const onVideoReady = () => onAssetLoaded();
+    video.onloadeddata = onVideoReady;
+    video.onerror = onVideoReady;
+    const videoTimeout = setTimeout(onVideoReady, 1800);
+
+    // Safety timeout so slow connections never hang
+    const safetyTimeout = setTimeout(() => {
+      targetProgress = 100;
+    }, 2800);
+
+    // Smooth 60fps RAF loop
+    const tick = () => {
       if (cancelled) return;
-      const elapsed = now - startTime;
-      const t = Math.min(1, elapsed / duration);
 
-      // Fast-accelerating smooth easeOutQuart curve
-      const eased = 1 - Math.pow(1 - t, 4);
-      const currentVal = Math.min(100, Math.round(eased * 100));
+      const diff = targetProgress - displayProgress;
+      if (diff > 0) {
+        displayProgress += Math.max(0.5, diff * 0.12);
+      }
+
+      const clampedVal = Math.min(100, Math.round(displayProgress));
 
       if (barRef.current) {
-        barRef.current.style.width = `${Math.max(4, currentVal)}%`;
+        barRef.current.style.width = `${Math.max(4, clampedVal)}%`;
       }
       if (pctRef.current) {
-        pctRef.current.textContent = `${currentVal}%`;
+        pctRef.current.textContent = `${clampedVal}%`;
       }
 
-      // Update text only at milestone thresholds
+      // Update craft phase message
       for (let i = craftPhases.length - 1; i >= 0; i--) {
-        if (currentVal >= craftPhases[i].threshold) {
+        if (clampedVal >= craftPhases[i].threshold) {
           if (lastPhaseIdx !== i) {
             lastPhaseIdx = i;
             if (phaseRef.current) {
@@ -244,20 +288,22 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
         }
       }
 
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
+      if (clampedVal >= 100) {
         setTimeout(() => {
           if (!cancelled) onFinish();
-        }, 100);
+        }, 180);
+      } else {
+        animId = requestAnimationFrame(tick);
       }
     };
 
-    const animId = requestAnimationFrame(animate);
+    animId = requestAnimationFrame(tick);
 
     return () => {
       cancelled = true;
       cancelAnimationFrame(animId);
+      clearTimeout(videoTimeout);
+      clearTimeout(safetyTimeout);
     };
   }, [onFinish]);
 
@@ -373,11 +419,15 @@ function Nav({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (window.scrollY > 30) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const isPast = window.scrollY > 30;
+          setScrolled((prev) => (prev !== isPast ? isPast : prev));
+          ticking = false;
+        });
+        ticking = true;
       }
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -843,13 +893,13 @@ function Products({ onSelectProduct }: { onSelectProduct: (p: ProductItem) => vo
         </div>
 
         {/* Product Cards Grid */}
-        <motion.div layout className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <AnimatePresence>
             {filteredProducts.map((p, i) => (
               <ProductCard key={p.id} p={p} index={i} onQuickView={() => onSelectProduct(p)} />
             ))}
           </AnimatePresence>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -871,7 +921,6 @@ function ProductCard({
 
   return (
     <motion.div
-      layout
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
@@ -921,7 +970,7 @@ function ProductCard({
         <img
           src={p.img}
           alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
-          loading="lazy"
+          loading="eager"
           decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-106"
         />
@@ -1645,7 +1694,7 @@ function SuratDeliveryHub() {
           </div>
 
           {/* Localities Grid */}
-          <div className="mt-6 max-h-96 overflow-y-auto pr-1">
+          <div className="mt-6 max-h-96 overflow-y-auto pr-1" data-lenis-prevent>
             {filteredLocalities.length === 0 ? (
               <div className="text-center py-12">
                 <MapPin className="size-8 text-gold-deep mx-auto mb-2 opacity-50" />
@@ -1849,6 +1898,8 @@ function Founders() {
             <img
               src="/assets/founders.webp"
               alt="Rudrax and Aditya, founders of Frezz Drezz"
+              loading="eager"
+              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
@@ -2155,7 +2206,7 @@ function Home() {
         {!loaded && <LuxuryPreloader onFinish={handlePreloaderFinish} />}
       </AnimatePresence>
 
-      {loaded && <SmoothScroll />}
+      <SmoothScroll />
       <Nav onOpenQuickOrder={handleOpenGeneralOrder} />
       <main id="main-content" tabIndex={-1}>
         <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={HERO_VIDEO_OVERLAY_PERCENT} />

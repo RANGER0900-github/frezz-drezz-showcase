@@ -3,29 +3,23 @@ import Lenis from "lenis";
 
 export function SmoothScroll() {
   useEffect(() => {
-    // Proven ultra-responsive lerp config from commit 11e8c39 (zero lag, silky 60-120fps)
+    // Ultra-smooth, responsive delta-damped physics (Industry gold standard for smooth scrolling)
     const lenis = new Lenis({
-      lerp: 0.12,
-      smoothWheel: true,
-      syncTouch: false,
+      lerp: 0.1,             // Instant response on wheel tick with silky smooth decay
+      smoothWheel: true,     // Butter-smooth mouse wheel interpolation
+      syncTouch: false,      // Preserve 100% native 120Hz hardware momentum on touchpads & mobile
+      wheelMultiplier: 1.0,  // Natural 1:1 scroll distance
+      autoRaf: true,         // Built-in high-precision internal RAF loop
     });
 
-    // Store globally for custom programmatic scroll triggers
+    // Store globally for programmatic scroll triggers
     (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
 
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-
-    rafId = requestAnimationFrame(raf);
-
-    // Keep Lenis geometry synchronized with window resizing
+    // Synchronize geometry with window resizing
     const handleResize = () => lenis.resize();
     window.addEventListener("resize", handleResize);
 
-    // Intercept internal hash links for silky smooth scrolling
+    // Intercept internal hash links for buttery smooth animated jumps
     const handleAnchorClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement)?.closest("a");
       if (!target) return;
@@ -34,11 +28,11 @@ export function SmoothScroll() {
       if (href && href.startsWith("#")) {
         e.preventDefault();
         if (href === "#" || href === "#top") {
-          lenis.scrollTo(0);
+          lenis.scrollTo(0, { lerp: 0.08 });
         } else {
           const el = document.querySelector(href);
           if (el) {
-            lenis.scrollTo(el as HTMLElement, { offset: -70 });
+            lenis.scrollTo(el as HTMLElement, { offset: -70, lerp: 0.08 });
           }
         }
       }
@@ -46,13 +40,12 @@ export function SmoothScroll() {
 
     document.addEventListener("click", handleAnchorClick);
 
-    // Immediate resize to ensure exact viewport dimensions
+    // Initial resize to ensure geometry is perfectly aligned with viewport
     requestAnimationFrame(() => lenis.resize());
 
     return () => {
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("click", handleAnchorClick);
-      cancelAnimationFrame(rafId);
       lenis.destroy();
       delete (window as unknown as { __lenis?: Lenis }).__lenis;
     };
