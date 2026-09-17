@@ -104,19 +104,12 @@
     background: var(--gold);
     color: var(--ink);
   }
-
-  img,
-  video {
-    will-change: transform;
-    backface-visibility: hidden;
-  }
 }
 
 /* Decorative blob */
 @utility wavy-blob {
   background: var(--butter);
   border-radius: 62% 38% 55% 45% / 55% 45% 55% 45%;
-  will-change: transform;
   backface-visibility: hidden;
 }
 
@@ -135,7 +128,6 @@
     background 0.4s cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   box-shadow: 0 10px 30px -12px color-mix(in oklab, var(--ink) 60%, transparent);
-  will-change: transform;
   &:hover {
     transform: translateY(-2px);
     background: var(--gold-deep);
@@ -152,7 +144,6 @@
   color: var(--ink);
   font-weight: 600;
   transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform, background-color;
   &:hover {
     background: var(--ink);
     color: var(--cream);

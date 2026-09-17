@@ -4,13 +4,14 @@ import Lenis from "lenis";
 export function SmoothScroll() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential liquid easeOut
+      duration: 0.85,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Snappy high-performance easeOut
       orientation: "vertical",
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 1.0,
-      touchMultiplier: 1.8,
+      touchMultiplier: 1.0,
+      syncTouch: false,
     });
 
     // Store globally for custom programmatic scroll triggers
@@ -33,11 +34,11 @@ export function SmoothScroll() {
       if (href && href.startsWith("#")) {
         e.preventDefault();
         if (href === "#" || href === "#top") {
-          lenis.scrollTo(0, { duration: 1.2 });
+          lenis.scrollTo(0, { duration: 0.85 });
         } else {
           const el = document.querySelector(href);
           if (el) {
-            lenis.scrollTo(el as HTMLElement, { offset: -70, duration: 1.2 });
+            lenis.scrollTo(el as HTMLElement, { offset: -70, duration: 0.85 });
           }
         }
       }

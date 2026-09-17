@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState, useMemo } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import {
   Copy,
   Check,
@@ -39,11 +39,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Frezz Drezz — 100% Real Freeze-Dried Fruit | Best Healthy Snack in Surat" },
+      {
+        title: "Frezz Drezz | 100% Real Freeze-Dried Fruit & Ice Cream Alternative (Surat, Gujarat)",
+      },
       {
         name: "description",
         content:
-          "Freeze-dried fruit made from 100% real fruit. Zero added sugar. Zero dairy or preservatives. Pure crunch. The premier healthy alternative to ice cream in Surat, Gujarat.",
+          "Surat's guilt-free 100% real fruit crunch alternative to ice cream. Zero added sugar, zero preservatives, 100% Jain & vegan compliant. Same-day delivery across Adajan, Vesu, City Light, Piplod & all 34 Surat localities.",
       },
       { property: "og:image", content: "https://frezzdrezz.com/og-image.png" },
       { property: "og:image:width", content: "1200" },
@@ -52,7 +54,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "preload", as: "image", href: "/assets/logo-384.png", type: "image/png" },
-      { rel: "preload", as: "video", href: "/assets/hero-loop.mp4", type: "video/mp4" },
+      { rel: "preload", as: "video", href: "/assets/hero-loop-720p.mp4", type: "video/mp4" },
       { rel: "preload", as: "image", href: "/assets/pineapple.webp", type: "image/webp" },
       { rel: "preload", as: "image", href: "/assets/banana.webp", type: "image/webp" },
     ],
@@ -187,25 +189,21 @@ const craftPhases = [
 ];
 
 function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLDivElement>(null);
+  const pctRef = useRef<HTMLSpanElement>(null);
+  const phaseRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     let cancelled = false;
-    let currentVal = 0;
     const startTime = performance.now();
-    const duration = 950; // 950ms snappy, ultra-smooth responsive experience
+    const duration = 850; // Snappy, responsive 850ms load
 
-    // 1. Parallel Asset Preload & Decode Warm-up
+    // 1. Parallel lightweight asset warm-up (only essential small webp icons)
     const criticalAssets = [
       "/assets/logo-384.png",
       "/assets/logo-128.png",
-      "/assets/frezz-drezz-logo.png",
       "/assets/pineapple.webp",
       "/assets/banana.webp",
-      "/assets/strawberry.webp",
-      "/assets/kiwi.webp",
-      "/assets/apple.webp",
-      "/assets/founders.webp",
     ];
 
     criticalAssets.forEach((src) => {
@@ -214,11 +212,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       if (img.decode) img.decode().catch(() => {});
     });
 
-    const testVideo = document.createElement("video");
-    testVideo.preload = "auto";
-    testVideo.src = "/assets/hero-loop.mp4";
+    let lastPhaseIdx = 0;
 
-    // 2. Smooth 60fps Eased Progression Loop
+    // 2. High-performance direct DOM 60fps animation (Zero React state re-render overhead)
     const animate = (now: number) => {
       if (cancelled) return;
       const elapsed = now - startTime;
@@ -226,16 +222,34 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
       // Fast-accelerating smooth easeOutQuart curve
       const eased = 1 - Math.pow(1 - t, 4);
-      currentVal = Math.min(100, Math.round(eased * 100));
-      setProgress(currentVal);
+      const currentVal = Math.min(100, Math.round(eased * 100));
+
+      if (barRef.current) {
+        barRef.current.style.width = `${Math.max(4, currentVal)}%`;
+      }
+      if (pctRef.current) {
+        pctRef.current.textContent = `${currentVal}%`;
+      }
+
+      // Update text only at milestone thresholds
+      for (let i = craftPhases.length - 1; i >= 0; i--) {
+        if (currentVal >= craftPhases[i].threshold) {
+          if (lastPhaseIdx !== i) {
+            lastPhaseIdx = i;
+            if (phaseRef.current) {
+              phaseRef.current.textContent = craftPhases[i].text;
+            }
+          }
+          break;
+        }
+      }
 
       if (t < 1) {
         requestAnimationFrame(animate);
       } else {
-        setProgress(100);
         setTimeout(() => {
           if (!cancelled) onFinish();
-        }, 120);
+        }, 100);
       }
     };
 
@@ -246,16 +260,6 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       cancelAnimationFrame(animId);
     };
   }, [onFinish]);
-
-  // Current craftsmanship message
-  const currentStatus = useMemo(() => {
-    for (let i = craftPhases.length - 1; i >= 0; i--) {
-      if (progress >= craftPhases[i].threshold) {
-        return craftPhases[i].text;
-      }
-    }
-    return craftPhases[0].text;
-  }, [progress]);
 
   return (
     <motion.div
@@ -320,9 +324,10 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
           <div className="w-full h-2.5 bg-ink/10 rounded-full overflow-hidden p-0.5 relative shadow-inner border border-gold/20">
             {/* Animated Gradient Bar with Leading Flare and Shimmer */}
             <div
+              ref={barRef}
               id="preloader-bar"
               className="h-full rounded-full bg-gradient-to-r from-gold-deep via-gold to-gold-deep relative transition-all duration-75 ease-out overflow-hidden shadow-sm"
-              style={{ width: `${Math.max(4, progress)}%` }}
+              style={{ width: "4%" }}
             >
               {/* Shimmer light sweep */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent preloader-shine pointer-events-none" />
@@ -334,18 +339,23 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
               <span className="size-1.5 rounded-full bg-gold-deep animate-ping" />
               CRUNCH ENGINE
             </span>
-            <span id="preloader-pct" className="font-semibold text-gold-deep font-mono text-xs">
-              {progress}%
+            <span
+              ref={pctRef}
+              id="preloader-pct"
+              className="font-semibold text-gold-deep font-mono text-xs"
+            >
+              0%
             </span>
           </div>
 
           {/* Dynamic Craft Phase Message with Smooth Crossfade */}
           <div className="h-6 flex items-center justify-center">
             <p
+              ref={phaseRef}
               id="preloader-craft-phase"
               className="text-xs font-serif italic text-ink/80 text-center transition-all duration-200"
             >
-              {currentStatus}
+              Selecting peak-harvest orchard fruit...
             </p>
           </div>
         </div>
@@ -557,6 +567,7 @@ function Hero({
   onOpenQuickOrder: () => void;
   overlayOpacity?: number;
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [videoVisible, setVideoVisible] = useState(false);
 
@@ -589,8 +600,25 @@ function Hero({
 
     const fallbackTimeout = setTimeout(() => setVideoVisible(true), 600);
 
+    // Pause video when scrolled out of viewport to free GPU/CPU decoding cycles
+    let observer: IntersectionObserver | null = null;
+    if (sectionRef.current && typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            v.play().catch(() => {});
+          } else {
+            v.pause();
+          }
+        },
+        { threshold: 0.05 }
+      );
+      observer.observe(sectionRef.current);
+    }
+
     return () => {
       clearTimeout(fallbackTimeout);
+      if (observer) observer.disconnect();
       v.removeEventListener("loadeddata", startPlayback);
       v.removeEventListener("canplay", startPlayback);
     };
@@ -598,11 +626,12 @@ function Hero({
 
   return (
     <section
+      ref={sectionRef}
       id="top"
       className="relative min-h-[92vh] md:min-h-screen overflow-hidden flex items-center bg-cream"
     >
       {/* Optimized faststart looping video layer */}
-      <div className="absolute inset-0 overflow-hidden transform-gpu">
+      <div className="absolute inset-0 overflow-hidden">
         <video
           ref={videoRef}
           muted
@@ -610,10 +639,10 @@ function Hero({
           loop
           playsInline
           preload="auto"
-          className="w-full h-full object-cover will-change-transform transform-gpu transition-opacity duration-500"
+          className="w-full h-full object-cover transition-opacity duration-500"
           style={{ opacity: videoVisible ? 1 : 0 }}
         >
-          <source src="/assets/hero-loop.mp4" type="video/mp4" />
+          <source src="/assets/hero-loop-720p.mp4" type="video/mp4" />
         </video>
 
         {/* Dynamic tunable overlays */}
@@ -835,10 +864,6 @@ function ProductCard({
   index: number;
   onQuickView: () => void;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], [15, -15]);
-
   const waMessage = encodeURIComponent(
     `Hello Frezz Drezz! I would like to order *${p.name}* (${p.tag}) 🍃\n\nQuantity = 2 pouches\nName = \nDelivery Address = \n`,
   );
@@ -846,12 +871,11 @@ function ProductCard({
 
   return (
     <motion.div
-      ref={ref}
       layout
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, delay: index * 0.07, ease: [0.2, 0.8, 0.2, 1] }}
+      viewport={{ once: true, margin: "-40px" }}
+      transition={{ duration: 0.5, delay: index * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
       className="group relative overflow-hidden rounded-3xl border border-ink/10 bg-cream flex flex-col justify-between shadow-sm hover:shadow-xl transition-all duration-500"
       style={{ background: `linear-gradient(180deg, ${p.tint} 0%, var(--cream) 70%)` }}
     >
@@ -894,10 +918,11 @@ function ProductCard({
         className="relative aspect-[4/5] overflow-hidden cursor-pointer mx-3.5 mt-2 rounded-2xl border border-ink/10 shadow-md bg-butter/20 group-hover:shadow-xl transition-all duration-500"
         onClick={onQuickView}
       >
-        <motion.img
+        <img
           src={p.img}
           alt={`Frezz Drezz ${p.name} freeze-dried fruit pouch`}
-          style={{ y }}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-106"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
