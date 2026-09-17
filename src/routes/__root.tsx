@@ -74,35 +74,86 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+import { JSON_LD_STRUCTURED_DATA } from "@/lib/seo-data";
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Frezz Drezz — Pure by Nature, Crisp by Craft" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5" },
+      { title: "Frezz Drezz — 100% Real Freeze-Dried Fruit | Best Healthy Snack in Surat" },
       {
         name: "description",
         content:
-          "Frezz Drezz freeze-dried fruit: 100% real fruit, no added sugar, no preservatives. Crisp, pure, and made with craft.",
+          "Frezz Drezz in Surat, Gujarat: 100% pure freeze-dried fruit with zero added sugar, zero preservatives, and pure crunch. The ultimate healthy, guilt-free alternative to ice cream and sweet snacks. Delivered fresh across Surat.",
       },
-      { property: "og:title", content: "Frezz Drezz — Freeze Dried Fruit" },
+      {
+        name: "keywords",
+        content:
+          "Frezz Drezz, best healthy icecream in Surat, healthy ice cream alternative Surat, freeze dried fruit Surat, freeze dried fruits Gujarat, natural fruit snacks Surat, Jain snacks Surat, vegan healthy snacks Vesu, Adajan, Varachha, Althan, Pal, Piplod, Katargam, freeze dried strawberries Surat, zero sugar snacks Gujarat, pure fruit snacks India",
+      },
+      { name: "robots", content: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" },
+      { name: "author", content: "Frezz Drezz" },
+      { name: "geo.region", content: "IN-GJ" },
+      { name: "geo.placename", content: "Surat, Gujarat, India" },
+      { name: "geo.position", content: "21.1702;72.8311" },
+      { name: "ICBM", content: "21.1702, 72.8311" },
+      { name: "theme-color", content: "#FAF7F2" },
+      { name: "msapplication-TileColor", content: "#C99A2E" },
+      { property: "og:title", content: "Frezz Drezz — Pure Fruit Crunch | Healthy Ice Cream Alternative in Surat" },
       {
         property: "og:description",
-        content: "Pure by nature, crisp by craft. Discover Frezz Drezz freeze-dried fruit.",
+        content:
+          "Pure by nature, crisp by craft. 100% real fruit, zero added sugar, zero preservatives. Artisanal freeze-dried fruit dispatched across 34+ Surat localities.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://frezzdrezz.com" },
+      { property: "og:site_name", content: "Frezz Drezz" },
+      { property: "og:locale", content: "en_IN" },
+      { property: "og:image", content: "https://frezzdrezz.com/og-image.png" },
+      { property: "og:image:secure_url", content: "https://frezzdrezz.com/og-image.png" },
+      { property: "og:image:type", content: "image/png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "Frezz Drezz 100% Real Freeze-Dried Fruit in Surat" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@frezzdrezz" },
+      { name: "twitter:title", content: "Frezz Drezz — 100% Real Freeze-Dried Fruit in Surat" },
+      {
+        name: "twitter:description",
+        content:
+          "Pure fruit crunch, zero added sugar. The premier healthy alternative to ice cream in Surat, Gujarat.",
+      },
+      { name: "twitter:image", content: "https://frezzdrezz.com/og-image.png" },
     ],
     links: [
+      { rel: "canonical", href: "https://frezzdrezz.com" },
+      { rel: "alternate", hrefLang: "en-IN", href: "https://frezzdrezz.com" },
+      { rel: "alternate", hrefLang: "gu-IN", href: "https://frezzdrezz.com" },
+      { rel: "alternate", hrefLang: "hi-IN", href: "https://frezzdrezz.com" },
+      { rel: "alternate", hrefLang: "x-default", href: "https://frezzdrezz.com" },
+      { rel: "dns-prefetch", href: "https://wa.me" },
+      { rel: "dns-prefetch", href: "https://api.whatsapp.com" },
+      { rel: "dns-prefetch", href: "https://www.instagram.com" },
+      { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
+      { rel: "alternate", type: "application/rss+xml", title: "Frezz Drezz Product Catalog", href: "https://frezzdrezz.com/google-merchant-feed.xml" },
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-      { rel: "apple-touch-icon", href: "/favicon-192.png" },
+      { rel: "icon", href: "/favicon.ico", sizes: "any" },
+      { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+      { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+      { rel: "icon", href: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
+      { rel: "apple-touch-icon-precomposed", href: "/apple-touch-icon-precomposed.png" },
+      { rel: "manifest", href: "/site.webmanifest" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..900,0..100,0..1;1,9..144,400..900,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap",
       },
+      { rel: "preload", href: "/assets/logo-384.png", as: "image", type: "image/png" },
+      { rel: "preload", href: "/assets/logo-128.png", as: "image", type: "image/png" },
+      { rel: "preload", href: "/assets/frezz-drezz-logo.png", as: "image", type: "image/png" },
       { rel: "preload", href: "/assets/pineapple.webp", as: "image", type: "image/webp" },
       { rel: "preload", href: "/assets/banana.webp", as: "image", type: "image/webp" },
       { rel: "preload", href: "/assets/strawberry.webp", as: "image", type: "image/webp" },
@@ -116,9 +167,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" dir="ltr" className="scroll-smooth">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD_STRUCTURED_DATA) }}
+        />
       </head>
       <body>
         {children}

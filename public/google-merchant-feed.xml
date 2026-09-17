@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
+  <channel>
+    <title>Frezz Drezz — 100% Real Freeze-Dried Fruit Snacks</title>
+    <link>https://frezzdrezz.com</link>
+    <description>Pure by nature, crisp by craft. 100% pure freeze-dried fruit, 0g added sugar, 100% Jain friendly and vegan. Handcrafted in Surat, Gujarat.</description>
+
+    <!-- 1. Pineapple -->
+    <item>
+      <g:id>FD-PINE-35</g:id>
+      <g:title>Frezz Drezz Freeze-Dried Pineapple (35g Pouch)</g:title>
+      <g:description>100% pure ripe tropical pineapple freeze-dried at -40°C. 0g added sugar, 0% fat, 100% Jain friendly and vegan. The ultimate healthy ice cream alternative in Surat, Gujarat.</g:description>
+      <g:link>https://frezzdrezz.com/#products</g:link>
+      <g:image_link>https://frezzdrezz.com/assets/pineapple.webp</g:image_link>
+      <g:brand>Frezz Drezz</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>249.00 INR</g:price>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:region>Gujarat</g:region>
+        <g:service>Surat Doorstep Express Dispatch</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Food Items &gt; Snack Foods &gt; Dried Fruit</g:google_product_category>
+      <g:product_type>Snack Foods &gt; Freeze Dried Fruits &gt; Healthy Ice Cream Alternative</g:product_type>
+      <g:custom_label_0>Surat Doorstep Delivery</g:custom_label_0>
+      <g:custom_label_1>Zero Added Sugar</g:custom_label_1>
+      <g:custom_label_2>100% Jain Compliant</g:custom_label_2>
+    </item>
+
+    <!-- 2. Banana -->
+    <item>
+      <g:id>FD-BAN-40</g:id>
+      <g:title>Frezz Drezz Freeze-Dried Banana (40g Pouch)</g:title>
+      <g:description>Golden cream ripe bananas freeze-dried to airy perfection. Rich in potassium and prebiotic fiber with zero added sugar and zero preservatives. Surat, Gujarat.</g:description>
+      <g:link>https://frezzdrezz.com/#products</g:link>
+      <g:image_link>https://frezzdrezz.com/assets/banana.webp</g:image_link>
+      <g:brand>Frezz Drezz</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>249.00 INR</g:price>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:region>Gujarat</g:region>
+        <g:service>Surat Doorstep Express Dispatch</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Food Items &gt; Snack Foods &gt; Dried Fruit</g:google_product_category>
+      <g:product_type>Snack Foods &gt; Freeze Dried Fruits &gt; Healthy Ice Cream Alternative</g:product_type>
+      <g:custom_label_0>Surat Doorstep Delivery</g:custom_label_0>
+      <g:custom_label_1>Zero Added Sugar</g:custom_label_1>
+      <g:custom_label_2>100% Jain Compliant</g:custom_label_2>
+    </item>
+
+    <!-- 3. Strawberry -->
+    <item>
+      <g:id>FD-STRAW-30</g:id>
+      <g:title>Frezz Drezz Freeze-Dried Strawberry (30g Pouch)</g:title>
+      <g:description>Whole handpicked wild strawberries freeze-dried for intense ruby brightness and crisp sweet-tart rush. The #1 gourmet gelato and ice cream topping in Surat.</g:description>
+      <g:link>https://frezzdrezz.com/#products</g:link>
+      <g:image_link>https://frezzdrezz.com/assets/strawberry.webp</g:image_link>
+      <g:brand>Frezz Drezz</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>299.00 INR</g:price>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:region>Gujarat</g:region>
+        <g:service>Surat Doorstep Express Dispatch</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Food Items &gt; Snack Foods &gt; Dried Fruit</g:google_product_category>
+      <g:product_type>Snack Foods &gt; Freeze Dried Fruits &gt; Healthy Ice Cream Alternative</g:product_type>
+      <g:custom_label_0>Surat Doorstep Delivery</g:custom_label_0>
+      <g:custom_label_1>Zero Added Sugar</g:custom_label_1>
+      <g:custom_label_2>100% Jain Compliant</g:custom_label_2>
+    </item>
+
+    <!-- 4. Kiwi -->
+    <item>
+      <g:id>FD-KIWI-30</g:id>
+      <g:title>Frezz Drezz Freeze-Dried Kiwi (30g Pouch)</g:title>
+      <g:description>Zesty green freeze-dried kiwi slices with edible seed pop and vibrant natural tanginess. High in antioxidants and Vitamin C with zero added sugar. Surat, Gujarat.</g:description>
+      <g:link>https://frezzdrezz.com/#products</g:link>
+      <g:image_link>https://frezzdrezz.com/assets/kiwi.webp</g:image_link>
+      <g:brand>Frezz Drezz</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>279.00 INR</g:price>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:region>Gujarat</g:region>
+        <g:service>Surat Doorstep Express Dispatch</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Food Items &gt; Snack Foods &gt; Dried Fruit</g:google_product_category>
+      <g:product_type>Snack Foods &gt; Freeze Dried Fruits &gt; Healthy Ice Cream Alternative</g:product_type>
+      <g:custom_label_0>Surat Doorstep Delivery</g:custom_label_0>
+      <g:custom_label_1>Zero Added Sugar</g:custom_label_1>
+      <g:custom_label_2>100% Jain Compliant</g:custom_label_2>
+    </item>
+
+    <!-- 5. Apple -->
+    <item>
+      <g:id>FD-APPL-35</g:id>
+      <g:title>Frezz Drezz Freeze-Dried Apple (35g Pouch)</g:title>
+      <g:description>Golden orchard crisp apple slices freeze-dried to lock in natural sweetness, dietary pectin fiber, and pure aroma. Zero preservatives. Surat, Gujarat.</g:description>
+      <g:link>https://frezzdrezz.com/#products</g:link>
+      <g:image_link>https://frezzdrezz.com/assets/apple.webp</g:image_link>
+      <g:brand>Frezz Drezz</g:brand>
+      <g:condition>new</g:condition>
+      <g:availability>in_stock</g:availability>
+      <g:price>249.00 INR</g:price>
+      <g:shipping>
+        <g:country>IN</g:country>
+        <g:region>Gujarat</g:region>
+        <g:service>Surat Doorstep Express Dispatch</g:service>
+        <g:price>0.00 INR</g:price>
+      </g:shipping>
+      <g:google_product_category>Food, Beverages &amp; Tobacco &gt; Food Items &gt; Snack Foods &gt; Dried Fruit</g:google_product_category>
+      <g:product_type>Snack Foods &gt; Freeze Dried Fruits &gt; Healthy Ice Cream Alternative</g:product_type>
+      <g:custom_label_0>Surat Doorstep Delivery</g:custom_label_0>
+      <g:custom_label_1>Zero Added Sugar</g:custom_label_1>
+      <g:custom_label_2>100% Jain Compliant</g:custom_label_2>
+    </item>
+  </channel>
+</rss>
+

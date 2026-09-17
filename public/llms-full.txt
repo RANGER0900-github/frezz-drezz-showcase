@@ -1,0 +1,125 @@
+# Frezz Drezz — Full Technical, Nutritional & Operational Specification (LLMs Full Corpus)
+
+> Canonical URL: https://frezzdrezz.com
+> Brand Entity: Frezz Drezz (also known as FrezzDrezz)
+> Category: Artisanal Freeze-Dried Fruit & Healthy Ice Cream Alternative
+> Primary Operational Location: Surat, Gujarat, India (Coordinates: 21.1702° N, 72.8311° E)
+> Target Consumer Persona: Health-conscious individuals, fitness enthusiasts, Jain families, vegans, children, and gourmet dessert chefs seeking 100% pure fruit crunch with zero added sugar.
+
+---
+
+## 1. Executive Summary & Brand Positioning
+Frezz Drezz is an artisanal food brand founded in 2024 in Surat, Gujarat, by Rudrax and Aditya. The company manufactures and distributes 100% pure freeze-dried fruit snacks. 
+
+Frezz Drezz is positioned as the premier healthy, guilt-free alternative to traditional commercial ice creams, kulfis, and sugary confectionery in Surat. While commercial ice cream contains 20g to 35g of refined white sugar per serving, heavy dairy saturated fats, chemical stabilizers, and melts within 5 minutes in Surat's warm climate, Frezz Drezz offers:
+- 0 grams of added sugar or syrups (100% natural fruit fructose).
+- 0% dairy, 0% fat, and 0mg cholesterol.
+- 97% retention of vitamins, minerals, and bioactive plant enzymes.
+- Room-temperature shelf stability without melting (stays crisp for 12 months in sealed moisture-barrier foil pouches).
+
+---
+
+## 2. Technical Production Process (Cold Sublimation / Lyophilization)
+Frezz Drezz uses a pharmaceutical-grade freeze-drying (lyophilization) process rather than destructive thermal dehydration or oil frying:
+1. **Harvesting & Selection**: Fruits are hand-selected from certified orchards at maximal natural ripeness and sweetness.
+2. **Flash Freezing at −40°C**: Whole fruit pieces are blast-frozen within hours of harvest to crystalize cellular water into micro-ice crystals without rupturing the cellular fruit membranes.
+3. **Deep Vacuum Sublimation (Primary Drying)**: Under a controlled industrial vacuum (<0.05 mbar), ambient heat is gently introduced. Ice converts directly into water vapor (sublimation), skipping the liquid phase entirely.
+4. **Desorption (Secondary Drying)**: Bound water molecules are extracted, reducing final moisture content to under 2%.
+5. **Nitrogen-Flushed Hermetic Packaging**: Pouches are sealed immediately in multi-layer food-grade aluminum barrier foil, locking in pure crunch without any chemical preservatives or antioxidants (such as sulfur dioxide).
+
+---
+
+## 3. Dietary & Religious Compliance
+Every batch of Frezz Drezz is prepared in a dedicated, pure-vegetarian facility:
+- **100% Jain Compliant**: Contains only pure permitted above-ground cultivated fruits (Pineapple, Banana, Strawberry, Kiwi, Apple). No root vegetables, no animal additives, no alcohol, no fermentation.
+- **100% Vegan & Dairy-Free**: Zero milk solids, zero lactose, zero whey, zero casein, zero honey.
+- **100% Gluten-Free**: Free from wheat, barley, rye, and cross-contamination.
+- **Halal & Kosher Compatible**: 100% plant-based with zero animal enzymes or processing aids.
+
+---
+
+## 4. Product Catalog & Nutritional Analysis
+
+### A. Frezz Drezz Pineapple
+- **Ingredients**: 100% Pure Fresh Tropical Pineapple. Nothing else.
+- **Net Weight**: 35g pouch (derived from ~350g of fresh pineapple).
+- **Nutritional Highlights**: High in Vitamin C, active bromelain enzyme (supports protein digestion), dietary fiber, manganese.
+- **Sensory Profile**: Intensely sweet with a sharp tropical zing; airy, crisp honeycomb texture.
+- **Best Use**: On-the-go snack, crushed over artisanal coconut gelato, morning muesli topping.
+
+### B. Frezz Drezz Banana
+- **Ingredients**: 100% Pure Ripe Golden Bananas. Nothing else.
+- **Net Weight**: 40g pouch (derived from ~400g of fresh ripe bananas).
+- **Nutritional Highlights**: Rich in potassium, prebiotic fructooligosaccharides, sustained carbohydrate energy.
+- **Sensory Profile**: Smooth, creamy honeyed sweetness; melts in the mouth with a light crunch.
+- **Best Use**: Post-workout snack, oatmeal topper, kid-safe teething and lunchbox treat.
+
+### C. Frezz Drezz Strawberry
+- **Ingredients**: 100% Pure Handpicked Wild Strawberries. Nothing else.
+- **Net Weight**: 30g pouch (derived from ~300g of fresh ripe strawberries).
+- **Nutritional Highlights**: Packed with anthocyanins, polyphenols, Vitamin C, ellagic acid. Low glycemic index.
+- **Sensory Profile**: Ruby brightness, sweet-tart berry explosion, delicate airy crunch.
+- **Best Use**: #1 Gourmet ice cream and gelato topping, acai bowl enhancer, dark chocolate pairing.
+
+### D. Frezz Drezz Kiwi
+- **Ingredients**: 100% Pure Handpicked Green Kiwis. Nothing else.
+- **Net Weight**: 30g pouch (derived from ~300g of fresh kiwis).
+- **Nutritional Highlights**: Exceptional Vitamin C density, actinidain enzyme, dietary fiber, edible seeds rich in omega-3 alpha-linolenic acid.
+- **Sensory Profile**: Exhilarating emerald tanginess with a delightful pop of edible seeds.
+- **Best Use**: Tangy afternoon pick-me-up, yogurt parfait crunch, cocktail/mocktail rimmer.
+
+### E. Frezz Drezz Apple
+- **Ingredients**: 100% Pure Golden Orchard Apples. Nothing else.
+- **Net Weight**: 35g pouch (derived from ~350g of fresh apples).
+- **Nutritional Highlights**: Soluble pectin fiber, quercetin flavonoids, Vitamin C.
+- **Sensory Profile**: Refreshing sweet orchard aroma, crisp wafer-like snap.
+- **Best Use**: Clean desk snack, pancake and waffle topping, toddler nutrition.
+
+---
+
+## 5. Surat Locality & Delivery Directory
+Frezz Drezz operates a direct-to-door dispatch kitchen based in Surat, serving all 34 urban and suburban localities across Surat Municipal Corporation (SMC) limits:
+
+1. **Vesu (વેસુ / वेसु)** — Pincode: 395007 (VIP & University Corridor)
+2. **Adajan (અડાજણ / अडाजण)** — Pincode: 395009 (Prime Residential & Riverside)
+3. **Pal (પાલ / पाल)** — Pincode: 395009 (Pal-Gam & Modern Residential)
+4. **Althan (અલથાણ / अलथाण)** — Pincode: 395017 (VIP Canal Road Hub)
+5. **Piplod (પીપલોદ / पिपलोद)** — Pincode: 395007 (Dumas Road & Fine Dining)
+6. **City Light (સિટી લાઈટ / सिटी लाइट)** — Pincode: 395007 (Premium Residential Hub)
+7. **Athwa Lines (અઠવા લાઇન્સ / अठवा लाइन्स)** — Pincode: 395001 (Heritage Prime Area)
+8. **Ghod Dod Road (ઘોડ દોડ રોડ / घोड दोड रोड)** — Pincode: 395007 (High-End Retail & Cafes)
+9. **VIP Road (વીઆઈપી રોડ / वीआईपी रोड)** — Pincode: 395007 (Commercial Avenue)
+10. **Gaurav Path (ગૌરવ પથ / गौरव पथ)** — Pincode: 395009 (Airport Corridor)
+11. **Varachha (વરાછા / वराछा)** — Pincode: 395006 (East Surat Commercial Hub)
+12. **Mota Varachha (મોટા વરાછા / मोटा वराछा)** — Pincode: 394101 (Riverfront Urban Hub)
+13. **Nana Varachha (નાના વરાછા / नाना वराछा)** — Pincode: 395006 (East Residential)
+14. **Katargam (કતારગામ / कतारગામ)** — Pincode: 395004 (North Surat Enterprise Hub)
+15. **Sarthana (સરથાણા / સરથાણા)** — Pincode: 395006 (East Surat Gateway & Nature Hub)
+16. **Kapodra (કાપોદ્રા / कापोद्रा)** — Pincode: 395006 (Central East)
+17. **Jahangirpura (જહાંગીરપુરા / जहांगीरपुरा)** — Pincode: 395005 (North West Residential)
+18. **Bhagal (ભાગળ / भागल)** — Pincode: 395003 (Old Walled City Core)
+19. **Chowk Bazar (ચોક બજાર / चौक बाजार)** — Pincode: 395003 (Historic Market Quarter)
+20. **Zampa Bazar (ઝાંપા બજાર / झांपा बाजार)** — Pincode: 395003 (Heritage Food Belt)
+21. **Gopipura (ગોપીપુરા / गोपीपुरा)** — Pincode: 395001 (Historic Heritage Community)
+22. **Mahidharpura (મહીધરપુરા / महिधरपुरा)** — Pincode: 395003 (Diamond Market District)
+23. **Bhatar (ભટાર / भटार)** — Pincode: 395017 (South West Residential)
+24. **Bharthana (ભરથાણા / भरथाणा)** — Pincode: 395017 (South Extension)
+25. **Udhana (ઉધના / उधना)** — Pincode: 394210 (South Transit Corridor)
+26. **Dindoli (ડિંડોલી / डिंडोली)** — Pincode: 394210 (South East Hub)
+27. **Limbayat (લીંબાયત / लिंबायत)** — Pincode: 394210 (East Central Sector)
+28. **Pandesara (પાંડેસરા / पांडेसरा)** — Pincode: 394221 (South Industrial Sector)
+29. **Puna Patiya (પુણા પાટિયા / पुणा पाटिया)** — Pincode: 395010 (East Link Corridor)
+30. **Sachin (સચિન / सचिन)** — Pincode: 394230 (South Industrial Belt)
+31. **Amroli (અમરોલી / अमरोली)** — Pincode: 394107 (North Tapi Belt)
+32. **Kosad (કોસાડ / कोसाड)** — Pincode: 394107 (North Urban Sector)
+33. **Kamrej (કામરેજ / कामरेज)** — Pincode: 394185 (Outer East Gateway)
+34. **Dumas (ડુમસ / डुमस)** — Pincode: 395007 (Coastal & Resort Belt)
+
+---
+
+## 6. Ordering & Customer Support
+- **Official Website**: https://frezzdrezz.com
+- **WhatsApp Concierge**: +91 63552 55862 / +91 93761 36009
+- **Official Instagram**: @frezzdrezz (https://www.instagram.com/frezzdrezz)
+- **Dispatch Model**: Small artisanal batches dispatched directly to doors across Surat to guarantee maximum crunch freshness.
+

@@ -11,15 +11,23 @@ import {
   Phone,
   ArrowRight,
   ChevronRight,
+  ChevronDown,
   ShieldCheck,
   Leaf,
   Layers,
   MessageCircle,
   ExternalLink,
   ZoomIn,
+  MapPin,
+  Search,
+  Truck,
+  Heart,
+  CheckCircle2,
+  HelpCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { SmoothScroll } from "@/lib/smooth-scroll";
+import { SURAT_LOCALITIES, FREZZ_DREZZ_FAQS } from "@/lib/seo-data";
 import {
   Dialog,
   DialogContent,
@@ -31,14 +39,19 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Frezz Drezz — Pure by Nature, Crisp by Craft" },
+      { title: "Frezz Drezz — 100% Real Freeze-Dried Fruit | Best Healthy Snack in Surat" },
       {
         name: "description",
         content:
-          "Freeze-dried fruit made from 100% real fruit. No added sugar. No preservatives. Just pure crunch.",
+          "Freeze-dried fruit made from 100% real fruit. Zero added sugar. Zero dairy or preservatives. Pure crunch. The premier healthy alternative to ice cream in Surat, Gujarat.",
       },
+      { property: "og:image", content: "https://frezzdrezz.com/og-image.png" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:image", content: "https://frezzdrezz.com/og-image.png" },
     ],
     links: [
+      { rel: "preload", as: "image", href: "/assets/logo-384.png", type: "image/png" },
       { rel: "preload", as: "video", href: "/assets/hero-loop.mp4", type: "video/mp4" },
       { rel: "preload", as: "image", href: "/assets/pineapple.webp", type: "image/webp" },
       { rel: "preload", as: "image", href: "/assets/banana.webp", type: "image/webp" },
@@ -184,6 +197,9 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
 
     // 1. Parallel Asset Preload & Decode Warm-up
     const criticalAssets = [
+      "/assets/logo-384.png",
+      "/assets/logo-128.png",
+      "/assets/frezz-drezz-logo.png",
       "/assets/pineapple.webp",
       "/assets/banana.webp",
       "/assets/strawberry.webp",
@@ -258,19 +274,28 @@ function LuxuryPreloader({ onFinish }: { onFinish: () => void }) {
       <div className="absolute bottom-1/4 -right-20 size-96 rounded-full bg-butter/40 blur-3xl pointer-events-none" />
 
       <div className="relative z-10 flex flex-col items-center max-w-md w-full">
-        {/* Animated Brand Emblem - Always visible from 0ms */}
+        {/* Animated Brand Emblem - Official Logo */}
         <div className="relative mb-6">
-          {/* Outer rotating crystal ring with glowing shadow */}
-          <div className="size-20 rounded-full border border-gold/50 flex items-center justify-center bg-butter/60 shadow-xl shadow-gold/20 relative">
-            <svg viewBox="0 0 100 100" className="size-14 text-gold-deep animate-spin-slow">
-              <path
-                d="M50 5 L53 35 L68 18 L58 45 L85 35 L62 55 L95 50 L65 65 L85 82 L58 70 L68 95 L50 75 L32 95 L42 70 L15 82 L35 65 L5 50 L38 55 L15 35 L42 45 L32 18 L47 35 Z"
-                fill="currentColor"
-                opacity="0.95"
-              />
-            </svg>
-            <div className="absolute size-3.5 rounded-full bg-cream border-2 border-gold-deep shadow-xs" />
-            <div className="absolute -inset-1 rounded-full border border-gold/30 animate-ping opacity-30 pointer-events-none" />
+          <div className="relative size-24 sm:size-28 rounded-full border-2 border-gold/60 p-1 bg-cream shadow-2xl shadow-gold/30 flex items-center justify-center overflow-hidden">
+            <img
+              src="/assets/logo-384.png"
+              srcSet="/assets/logo-128.png 1x, /assets/logo-384.png 2x"
+              alt="Frezz Drezz Official Logo"
+              width={112}
+              height={112}
+              loading="eager"
+              decoding="sync"
+              className="w-full h-full rounded-full object-cover shadow-sm"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.dataset.fallback) {
+                  target.dataset.fallback = "1";
+                  target.src = "/logo.png";
+                }
+              }}
+            />
+            {/* Ambient pulse ring */}
+            <div className="absolute -inset-2 rounded-full border border-gold/40 animate-ping opacity-25 pointer-events-none" />
           </div>
         </div>
 
@@ -350,10 +375,12 @@ function Nav({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
   }, []);
 
   const navLinks = [
-    { label: "Products", href: "#products" },
+    { label: "Flavors", href: "#products" },
+    { label: "Ice Cream Alternative", href: "#healthy-alternative" },
     { label: "Our Craft", href: "#story" },
+    { label: "Surat Delivery", href: "#surat-delivery" },
+    { label: "FAQ", href: "#faq" },
     { label: "Founders", href: "#founders" },
-    { label: "Contact", href: "#contact" },
   ];
 
   return (
@@ -367,11 +394,25 @@ function Nav({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
           {/* Brand Logo */}
           <a
             href="#top"
-            className="group flex items-center gap-2 font-display text-2xl font-semibold text-ink tracking-tight hover:opacity-90 transition"
+            className="group flex items-center gap-2.5 font-display text-2xl font-semibold text-ink tracking-tight hover:opacity-90 transition"
           >
-            <div className="size-8 rounded-full bg-butter border border-gold/40 flex items-center justify-center text-gold-deep shadow-sm">
-              <span className="font-display text-sm font-bold">F</span>
-            </div>
+            <img
+              src="/assets/logo-128.png"
+              srcSet="/assets/logo-384.png 2x"
+              alt="Frezz Drezz Official Logo"
+              width={36}
+              height={36}
+              loading="eager"
+              decoding="sync"
+              className="size-9 rounded-full object-cover shadow-sm ring-1 ring-gold/40 group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                const target = e.currentTarget as HTMLImageElement;
+                if (!target.dataset.fallback) {
+                  target.dataset.fallback = "1";
+                  target.src = "/logo.png";
+                }
+              }}
+            />
             <span>
               Frezz<span className="text-gold-deep italic font-serif">Drezz</span>
             </span>
@@ -425,6 +466,33 @@ function Nav({ onOpenQuickOrder }: { onOpenQuickOrder: () => void }) {
             className="fixed inset-x-0 top-[68px] z-40 bg-cream/95 backdrop-blur-xl border-b border-ink/10 px-6 py-8 shadow-2xl md:hidden"
           >
             <div className="flex flex-col gap-4">
+              {/* Mobile Drawer Header with Official Logo */}
+              <div className="flex items-center gap-3 pb-3 border-b border-ink/10">
+                <img
+                  src="/assets/logo-128.png"
+                  alt="Frezz Drezz Logo"
+                  width={40}
+                  height={40}
+                  loading="eager"
+                  className="size-10 rounded-full object-cover shadow-xs ring-1 ring-gold/40"
+                  onError={(e) => {
+                    const target = e.currentTarget as HTMLImageElement;
+                    if (!target.dataset.fallback) {
+                      target.dataset.fallback = "1";
+                      target.src = "/logo.png";
+                    }
+                  }}
+                />
+                <div>
+                  <div className="font-display text-lg font-semibold text-ink leading-none">
+                    Frezz<span className="text-gold-deep italic font-serif">Drezz</span>
+                  </div>
+                  <div className="text-[10px] uppercase tracking-widest text-ink/60 font-sans mt-0.5">
+                    Pure Fruit Craft
+                  </div>
+                </div>
+              </div>
+
               {navLinks.map((link) => (
                 <a
                   key={link.label}
@@ -575,7 +643,7 @@ function Hero({
             className="inline-flex items-center gap-2 rounded-full bg-butter/90 backdrop-blur px-4 py-1.5 text-xs font-semibold tracking-widest uppercase text-gold-deep border border-gold/40 shadow-sm"
           >
             <span className="size-2 rounded-full bg-gold-deep animate-pulse" />
-            <span>100% Real Fruit · Zero Added Sugar</span>
+            <span>100% Real Fruit · 0g Added Sugar · Jain &amp; Vegan</span>
           </motion.div>
 
           {/* Headline */}
@@ -597,8 +665,8 @@ function Hero({
             transition={{ delay: 0.3, duration: 0.8 }}
             className="mt-6 text-lg md:text-xl text-ink/75 max-w-xl font-serif leading-relaxed"
           >
-            Freeze-dried fruit at its most honest. No preservatives, no syrups. Just peak-season
-            fruit locked at maximum freshness and delivered in a weightless, pure crunch.
+            The 100% natural, guilt-free fruit crunch alternative to ice cream. Zero preservatives, zero
+            added sugar, and zero dairy bloat. Handcrafted in Surat, delivered fresh across Gujarat.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -606,16 +674,39 @@ function Hero({
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="mt-10 flex flex-wrap gap-4 items-center"
+            className="mt-8 flex flex-wrap gap-4 items-center"
           >
-            <a href="#products" className="btn-primary">
+            <a href="#products" className="btn-primary min-h-[44px]">
               <span>Explore 5 Flavors</span>
               <ArrowRight className="size-4" />
             </a>
-            <button onClick={onOpenQuickOrder} className="btn-ghost">
+            <button onClick={onOpenQuickOrder} className="btn-ghost min-h-[44px]">
               <ShoppingBag className="size-4" />
               <span>Quick Order</span>
             </button>
+          </motion.div>
+
+          {/* Surat Local Delivery Trust Badges */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.8 }}
+            className="mt-8 flex flex-wrap items-center gap-2.5 text-xs text-ink/75 font-medium"
+          >
+            <a
+              href="#surat-delivery"
+              className="inline-flex items-center gap-1.5 bg-butter/60 hover:bg-butter border border-gold/40 px-3.5 py-1.5 rounded-full transition-colors"
+            >
+              <Truck className="size-3.5 text-gold-deep" />
+              <span>Doorstep Delivery in Surat (Vesu, Adajan, Pal, Varachha &amp; 30+ Areas)</span>
+            </a>
+            <a
+              href="#healthy-alternative"
+              className="inline-flex items-center gap-1.5 bg-butter/60 hover:bg-butter border border-gold/40 px-3.5 py-1.5 rounded-full transition-colors"
+            >
+              <Heart className="size-3.5 text-berry" />
+              <span>#1 Healthy Ice Cream Alternative</span>
+            </a>
           </motion.div>
         </motion.div>
       </div>
@@ -894,7 +985,7 @@ function ProductQuickViewModal({
 
   return (
     <Dialog open={!!product} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-3xl bg-cream border-gold/30 p-0 overflow-hidden rounded-3xl shadow-2xl max-h-[90vh]">
+      <DialogContent className="max-w-3xl bg-cream border-gold/30 p-0 overflow-y-auto max-h-[85vh] rounded-3xl shadow-2xl">
         <div className="grid md:grid-cols-12 items-stretch">
           {/* Left Column: Focused Artwork Showcase with Interactive Zoom Lens (5 cols) */}
           <div
@@ -1101,6 +1192,206 @@ function ProductQuickViewModal({
 }
 
 /* -------------------------------------------------------------------------- */
+/*                  ICE CREAM ALTERNATIVE COMPARISON (SEO & PRODUCT)          */
+/* -------------------------------------------------------------------------- */
+
+interface IceCreamAlternativeSectionProps {
+  onOpenQuickOrder: () => void;
+}
+
+function IceCreamAlternativeSection({ onOpenQuickOrder }: IceCreamAlternativeSectionProps) {
+  const whatsappUrl =
+    "https://wa.me/919426868840?text=" +
+    encodeURIComponent(
+      "Hello Frezz Drezz! I would like to try your healthy zero-sugar fruit crunch alternative to traditional ice cream. Please share your flavor pouches and delivery options across Surat."
+    );
+
+  return (
+    <section id="healthy-alternative" className="relative py-24 md:py-32 px-6 bg-cream overflow-hidden">
+      {/* Background ambient accents */}
+      <div className="absolute top-1/2 -left-32 size-96 rounded-full bg-gold/15 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-20 -right-20 size-96 rounded-full bg-butter/40 blur-3xl pointer-events-none" />
+
+      <div className="mx-auto max-w-6xl relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full bg-butter/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold-deep border border-gold/40 shadow-xs mb-4">
+            <Heart className="size-3.5 text-berry" />
+            <span>Guilt-Free Sweet Indulgence</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl text-ink font-display tracking-tight leading-[1.05]">
+            Why Surat is Swapping Ice Cream for{" "}
+            <span className="italic font-serif font-normal text-gold-deep">Frezz Drezz</span>
+          </h2>
+          <p className="mt-6 font-serif text-lg md:text-xl text-ink/75 leading-relaxed">
+            All the sweet, crisp satisfaction of an exquisite dessert—with{" "}
+            <strong className="font-semibold text-ink">zero added sugar</strong>, zero dairy
+            heaviness, and zero melting mess in Gujarat's sunny climate.
+          </p>
+        </div>
+
+        {/* Head-to-Head Comparison Cards */}
+        <div className="mt-14 grid md:grid-cols-2 gap-8 items-stretch">
+          {/* Commercial Ice Cream & Kulfi */}
+          <div className="rounded-3xl bg-cream/70 border border-ink/10 p-8 md:p-10 shadow-sm flex flex-col justify-between">
+            <div>
+              <div className="flex items-center justify-between pb-5 border-b border-ink/10">
+                <div>
+                  <span className="text-[11px] uppercase tracking-wider text-ink/50 font-semibold">
+                    Traditional Treat
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-display text-ink/80 mt-0.5">
+                    Commercial Ice Cream &amp; Kulfi
+                  </h3>
+                </div>
+                <div className="size-10 rounded-full bg-ink/5 flex items-center justify-center text-ink/40 text-lg font-bold">
+                  ✕
+                </div>
+              </div>
+
+              <ul className="mt-6 space-y-4 text-sm text-ink/70">
+                <li className="flex items-start gap-3">
+                  <span className="text-berry font-bold text-base mt-[-2px]">✕</span>
+                  <div>
+                    <strong className="text-ink font-medium">20g - 35g Refined Sugar:</strong> Causes
+                    sharp glucose spikes, mid-day lethargy, and calorie overload.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-berry font-bold text-base mt-[-2px]">✕</span>
+                  <div>
+                    <strong className="text-ink font-medium">Dairy &amp; Saturated Fats:</strong>{" "}
+                    High in heavy cream, milk fats, and emulsifiers that cause post-dessert sluggishness.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-berry font-bold text-base mt-[-2px]">✕</span>
+                  <div>
+                    <strong className="text-ink font-medium">Artificial Additives:</strong> Chemical
+                    stabilizers, synthetic flavors, and color enhancers to simulate real fruit taste.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-berry font-bold text-base mt-[-2px]">✕</span>
+                  <div>
+                    <strong className="text-ink font-medium">Melts in 5 Minutes:</strong> In Surat’s
+                    weather, it rapidly turns into a sticky, messy liquid requiring deep freezers.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-ink/10 text-xs text-ink/50 font-serif italic">
+              Heavy on calories · Requires strict -18°C cold chain · High sugar crash
+            </div>
+          </div>
+
+          {/* Frezz Drezz Real Fruit Crunch */}
+          <div className="relative rounded-3xl bg-gradient-to-b from-butter/40 via-cream to-cream border-2 border-gold/60 p-8 md:p-10 shadow-xl flex flex-col justify-between">
+            <div className="absolute -top-3.5 right-8 bg-gold-deep text-cream text-[11px] font-semibold uppercase tracking-wider px-3.5 py-1 rounded-full shadow-md flex items-center gap-1.5">
+              <Sparkles className="size-3 text-gold" />
+              Surat's Healthy Choice
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between pb-5 border-b border-gold/30">
+                <div>
+                  <span className="text-[11px] uppercase tracking-wider text-gold-deep font-semibold">
+                    The Modern Pure Choice
+                  </span>
+                  <h3 className="text-2xl md:text-3xl font-display text-ink mt-0.5">
+                    Frezz Drezz Fruit Crunch
+                  </h3>
+                </div>
+                <div className="size-10 rounded-full bg-gold/30 flex items-center justify-center text-gold-deep text-lg font-bold">
+                  ✓
+                </div>
+              </div>
+
+              <ul className="mt-6 space-y-4 text-sm text-ink/85">
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 text-gold-deep shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ink font-semibold">0g Added Sugar:</strong> 100% natural
+                    fruit fructose. Sweet, crisp, and completely guilt-free.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 text-gold-deep shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ink font-semibold">100% Dairy-Free &amp; Jain Friendly:</strong>{" "}
+                    0% fat, zero cholesterol, vegan, and clean for every lifestyle.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 text-gold-deep shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ink font-semibold">97% Nutrient Retention:</strong>{" "}
+                    Sublimation at -40°C locks in natural vitamins, bio-enzymes, and fiber.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle2 className="size-5 text-gold-deep shrink-0 mt-0.5" />
+                  <div>
+                    <strong className="text-ink font-semibold">Crisp Room-Temp Storage:</strong> No
+                    melting! Stays airy and crisp anywhere for up to 12 months.
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-gold/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-xs font-serif text-ink/75">
+                <strong className="text-ink font-semibold">100% Pure Fruit.</strong> Nothing else inside.
+              </div>
+              <button
+                onClick={onOpenQuickOrder}
+                className="btn-primary text-xs !py-2.5 !px-5 w-full sm:w-auto justify-center shadow-md cursor-pointer"
+              >
+                <ShoppingBag className="size-3.5" />
+                Explore Flavors
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Dessert Topping Pro-Tip Banner */}
+        <div className="mt-12 rounded-3xl bg-butter/50 border border-gold/40 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="size-12 rounded-2xl bg-cream border border-gold/40 flex items-center justify-center shrink-0 shadow-xs">
+              <Sparkles className="size-6 text-gold-deep" />
+            </div>
+            <div>
+              <div className="text-xs uppercase tracking-widest text-gold-deep font-semibold">
+                Chef &amp; Dessert Lover's Secret
+              </div>
+              <h4 className="font-display text-xl md:text-2xl text-ink mt-0.5">
+                Love Gelato or Acai Bowls? Upgrade Your Topping!
+              </h4>
+              <p className="mt-1 text-sm font-serif text-ink/75 leading-relaxed max-w-2xl">
+                Crush Frezz Drezz wild strawberries, pineapples, or bananas over artisanal gelatos,
+                Greek yogurt, smoothie bowls, or breakfast oats. Experience an explosion of pure fruit
+                crunch without soggy artificial sprinkles.
+              </p>
+            </div>
+          </div>
+
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="btn-primary shrink-0 text-xs !py-3 !px-6 shadow-md w-full md:w-auto justify-center"
+          >
+            <MessageCircle className="size-4" />
+            Order on WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /*                               STORY & CRAFT                                */
 /* -------------------------------------------------------------------------- */
 
@@ -1183,6 +1474,329 @@ function Story() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                  SURAT DOORSTEP DELIVERY HUB & LOCALITY FINDER             */
+/* -------------------------------------------------------------------------- */
+
+const SURAT_ZONES = [
+  "All Localities",
+  "South Surat",
+  "West Surat",
+  "Central Surat",
+  "East Surat",
+  "North Surat",
+  "Outer Surat",
+] as const;
+
+function SuratDeliveryHub() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedZone, setSelectedZone] = useState<string>("All Localities");
+
+  const filteredLocalities = useMemo(() => {
+    return SURAT_LOCALITIES.filter((item) => {
+      const matchesSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        item.zone.toLowerCase().includes(searchQuery.toLowerCase().trim());
+      const matchesZone =
+        selectedZone === "All Localities" || item.zone.includes(selectedZone);
+      return matchesSearch && matchesZone;
+    });
+  }, [searchQuery, selectedZone]);
+
+  const createWhatsAppOrderLink = (localityName: string) => {
+    const message = `Hello Frezz Drezz! I would like to order fresh freeze-dried fruit pouches for doorstep delivery in ${localityName}, Surat. Please share current flavor availability and delivery timing.`;
+    return `https://wa.me/919426868840?text=${encodeURIComponent(message)}`;
+  };
+
+  return (
+    <section id="surat-delivery" className="relative py-24 md:py-32 px-6 bg-butter/20 border-y border-ink/5">
+      <div className="mx-auto max-w-6xl">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full bg-cream px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold-deep border border-gold/40 shadow-xs mb-4">
+            <Truck className="size-3.5 text-gold-deep" />
+            <span>Direct-To-Door Artisanal Dispatch</span>
+          </div>
+          <h2 className="text-4xl md:text-6xl text-ink font-display tracking-tight leading-[1.05]">
+            Fresh Doorstep Delivery Across{" "}
+            <span className="italic font-serif font-normal text-gold-deep">All of Surat</span>
+          </h2>
+          <p className="mt-6 font-serif text-lg md:text-xl text-ink/75 leading-relaxed">
+            Handcrafted with devotion in Surat. We operate our dedicated dispatch kitchen serving homes,
+            offices, and celebrations across{" "}
+            <strong className="font-semibold text-ink">34+ Surat localities</strong> via express WhatsApp concierge.
+          </p>
+        </div>
+
+        {/* 4 Trust Feature Cards */}
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            {
+              title: "Artisanal Surat Kitchen",
+              desc: "Freshly freeze-dried in small batches locally in Surat for peak freshness.",
+              icon: Sparkles,
+            },
+            {
+              title: "Direct WhatsApp Order",
+              desc: "Personalized concierge order directly with founders Rudrax & Aditya.",
+              icon: MessageCircle,
+            },
+            {
+              title: "100% Jain Compliant",
+              desc: "Zero animal products, 100% vegan, clean dedicated preparation.",
+              icon: ShieldCheck,
+            },
+            {
+              title: "No Cold Chain Hassle",
+              desc: "Crisp-sealed pouches don't melt in Surat heat. Enjoy anywhere.",
+              icon: Leaf,
+            },
+          ].map((feature) => (
+            <div
+              key={feature.title}
+              className="p-5 rounded-2xl bg-cream border border-gold/30 shadow-xs text-left flex flex-col justify-between"
+            >
+              <div className="size-10 rounded-xl bg-butter/60 border border-gold/30 flex items-center justify-center mb-3">
+                <feature.icon className="size-5 text-gold-deep" />
+              </div>
+              <div>
+                <h4 className="font-display text-base text-ink font-semibold">{feature.title}</h4>
+                <p className="mt-1.5 text-xs font-serif text-ink/70 leading-relaxed">{feature.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Interactive Locality Search & Zone Filter Bar */}
+        <div className="mt-14 p-6 md:p-8 rounded-3xl bg-cream border border-gold/40 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 border-b border-ink/10">
+            {/* Search Input */}
+            <div className="relative w-full md:max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-ink/40" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search your locality (e.g. Vesu, Adajan, Pal, Varachha...)"
+                className="w-full pl-10 pr-10 py-2.5 rounded-full bg-butter/30 border border-ink/15 text-sm text-ink placeholder:text-ink/45 focus:outline-none focus:border-gold-deep focus:ring-1 focus:ring-gold-deep transition"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 size-5 rounded-full bg-ink/10 hover:bg-ink/20 flex items-center justify-center text-ink/60 text-xs transition cursor-pointer"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* Result count */}
+            <div className="text-xs font-serif text-ink/60 self-center">
+              Serving <strong className="font-sans font-semibold text-ink">{filteredLocalities.length}</strong> localities in Surat
+            </div>
+          </div>
+
+          {/* Zone Filter Chips */}
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            {SURAT_ZONES.map((zone) => (
+              <button
+                key={zone}
+                onClick={() => setSelectedZone(zone)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
+                  selectedZone === zone
+                    ? "bg-ink text-cream shadow-xs"
+                    : "bg-butter/40 text-ink/75 border border-ink/10 hover:bg-butter hover:text-ink"
+                }`}
+              >
+                {zone}
+              </button>
+            ))}
+          </div>
+
+          {/* Localities Grid */}
+          <div className="mt-6 max-h-96 overflow-y-auto pr-1">
+            {filteredLocalities.length === 0 ? (
+              <div className="text-center py-12">
+                <MapPin className="size-8 text-gold-deep mx-auto mb-2 opacity-50" />
+                <p className="font-display text-lg text-ink">No exact locality match found</p>
+                <p className="text-xs font-serif text-ink/65 mt-1">
+                  Don't worry! We deliver all across Surat. Contact us on WhatsApp for custom doorstep delivery.
+                </p>
+                <a
+                  href={createWhatsAppOrderLink(searchQuery || "Surat")}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-primary text-xs !py-2 !px-4 mt-4 inline-flex items-center gap-2"
+                >
+                  <MessageCircle className="size-3.5" />
+                  Order to {searchQuery || "Surat"} via WhatsApp
+                </a>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {filteredLocalities.map((loc) => (
+                  <div
+                    key={loc.name}
+                    className="p-3.5 rounded-2xl bg-cream border border-ink/10 hover:border-gold/60 transition-all group flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <MapPin className="size-3.5 text-gold-deep shrink-0" />
+                        <span className="font-display font-semibold text-ink text-sm truncate">
+                          {loc.name}
+                        </span>
+                        <span className="text-[11px] font-serif text-ink/55 font-normal shrink-0">
+                          ({loc.nameGu})
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-ink/55 font-medium ml-5 mt-0.5 truncate">
+                        <span className="truncate">{loc.zone}</span>
+                        <span>·</span>
+                        <span className="font-mono font-medium text-ink/70 shrink-0">{loc.pincode}</span>
+                      </div>
+                    </div>
+
+                    <a
+                      href={createWhatsAppOrderLink(loc.name)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="shrink-0 size-8 rounded-full bg-butter/60 group-hover:bg-gold-deep group-hover:text-cream text-ink/75 flex items-center justify-center transition shadow-2xs"
+                      title={`Order delivery to ${loc.name}`}
+                      aria-label={`Order delivery to ${loc.name} via WhatsApp`}
+                    >
+                      <MessageCircle className="size-4" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Quick Notice */}
+          <div className="mt-6 pt-4 border-t border-ink/10 flex flex-col sm:flex-row items-center justify-between text-xs text-ink/65 gap-2">
+            <div className="flex items-center gap-2">
+              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Direct delivery dispatch active across Surat today</span>
+            </div>
+            <a
+              href="https://wa.me/919426868840?text=Hello%20Frezz%20Drezz!%20I%20would%20like%20to%20know%20delivery%20details%20for%20my%20area%20in%20Surat."
+              target="_blank"
+              rel="noreferrer"
+              className="text-gold-deep font-semibold hover:underline flex items-center gap-1"
+            >
+              Have a bulk/gifting order for a Surat event? Chat on WhatsApp ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/*                  SURAT FAQ SECTION (MATCHES FAQPAGE SCHEMA)                */
+/* -------------------------------------------------------------------------- */
+
+function SuratFaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  const toggleFaq = (idx: number) => {
+    setOpenIndex((curr) => (curr === idx ? null : idx));
+  };
+
+  return (
+    <section id="faq" className="relative py-24 md:py-32 px-6 bg-cream overflow-hidden">
+      <div className="mx-auto max-w-4xl relative z-10">
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 rounded-full bg-butter/90 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold-deep border border-gold/40 shadow-xs mb-4">
+            <HelpCircle className="size-3.5 text-gold-deep" />
+            <span>Questions &amp; Clarity</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl text-ink font-display tracking-tight leading-[1.1]">
+            Frequently Asked{" "}
+            <span className="italic font-serif font-normal text-gold-deep">Questions</span>
+          </h2>
+          <p className="mt-4 font-serif text-lg text-ink/75 leading-relaxed">
+            Everything you need to know about our freeze-drying craft, ingredients, Jain compliance,
+            and doorstep dispatch across Surat.
+          </p>
+        </div>
+
+        {/* FAQ Accordion List */}
+        <div className="mt-12 space-y-4">
+          {FREZZ_DREZZ_FAQS.map((faq, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <div
+                key={faq.question}
+                className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                  isOpen
+                    ? "bg-butter/30 border-gold/50 shadow-sm"
+                    : "bg-cream/80 border-ink/10 hover:border-gold/30"
+                }`}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleFaq(index)}
+                  className="w-full py-5 px-6 text-left flex items-center justify-between gap-4 cursor-pointer focus:outline-none"
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-display text-lg md:text-xl text-ink font-medium leading-snug">
+                    {faq.question}
+                  </span>
+                  <div
+                    className={`size-8 rounded-full border border-ink/10 flex items-center justify-center shrink-0 transition-transform duration-300 ${
+                      isOpen ? "rotate-180 bg-gold-deep text-cream border-transparent" : "text-ink/60 bg-cream"
+                    }`}
+                  >
+                    <ChevronDown className="size-4" />
+                  </div>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      key="content"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                    >
+                      <div className="px-6 pb-6 pt-1 text-sm md:text-base font-serif text-ink/75 leading-relaxed border-t border-gold/15">
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Bottom Help Box */}
+        <div className="mt-10 p-6 rounded-2xl bg-butter/50 border border-gold/30 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div>
+            <h4 className="font-display text-lg text-ink font-semibold">Still have a question?</h4>
+            <p className="text-xs font-serif text-ink/70 mt-0.5">
+              Talk directly with founders Rudrax &amp; Aditya on WhatsApp. We respond promptly!
+            </p>
+          </div>
+          <a
+            href="https://wa.me/919426868840?text=Hello%20Rudrax%20and%20Aditya!%20I%20have%20a%20question%20about%20Frezz%20Drezz."
+            target="_blank"
+            rel="noreferrer"
+            className="btn-primary shrink-0 text-xs !py-2.5 !px-5 shadow-sm"
+          >
+            <MessageCircle className="size-4" />
+            Chat with Founders
+          </a>
         </div>
       </div>
     </section>
@@ -1406,19 +2020,48 @@ function Footer() {
   return (
     <footer className="px-6 pb-12 pt-8 border-t border-ink/10">
       <div className="mx-auto max-w-7xl flex flex-wrap gap-6 items-center justify-between text-xs text-ink/65 font-medium">
-        <a href="#top" className="font-display text-xl text-ink font-semibold">
-          Frezz<span className="text-gold-deep italic font-serif">Drezz</span>
+        <a
+          href="#top"
+          className="group flex items-center gap-2.5 font-display text-xl text-ink font-semibold hover:opacity-90 transition"
+        >
+          <img
+            src="/assets/logo-128.png"
+            alt="Frezz Drezz Official Logo"
+            width={28}
+            height={28}
+            loading="lazy"
+            className="size-7 rounded-full object-cover shadow-xs ring-1 ring-gold/30 group-hover:scale-105 transition-transform"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              if (!target.dataset.fallback) {
+                target.dataset.fallback = "1";
+                target.src = "/logo.png";
+              }
+            }}
+          />
+          <span>
+            Frezz<span className="text-gold-deep italic font-serif">Drezz</span>
+          </span>
         </a>
         <div>
           © {new Date().getFullYear()} Frezz Drezz. Pure by nature, crisp by craft. Handcrafted with
           pride.
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-5 gap-y-2">
           <a href="#products" className="hover:text-gold-deep transition">
             Flavors
           </a>
+          <a href="#healthy-alternative" className="hover:text-gold-deep transition">
+            Ice Cream Alternative
+          </a>
           <a href="#story" className="hover:text-gold-deep transition">
             Our Craft
+          </a>
+          <a href="#surat-delivery" className="hover:text-gold-deep transition">
+            Surat Delivery
+          </a>
+          <a href="#faq" className="hover:text-gold-deep transition">
+            FAQ
           </a>
           <a href="#founders" className="hover:text-gold-deep transition">
             Founders
@@ -1474,19 +2117,32 @@ function Home() {
   }, [loaded]);
 
   return (
-    <div className="relative min-h-screen bg-cream text-ink antialiased selection:bg-gold selection:text-ink">
+    <div className="relative min-h-screen bg-cream text-ink antialiased selection:bg-gold selection:text-ink overflow-x-hidden w-full">
+      {/* WCAG 2.1 Accessibility Skip Link */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:bg-ink focus:text-cream focus:px-4 focus:py-2 focus:rounded-xl focus:shadow-2xl focus:ring-2 focus:ring-gold font-medium text-sm transition"
+      >
+        Skip to main content
+      </a>
+
       <AnimatePresence mode="wait">
         {!loaded && <LuxuryPreloader onFinish={handlePreloaderFinish} />}
       </AnimatePresence>
 
       <SmoothScroll />
       <Nav onOpenQuickOrder={handleOpenGeneralOrder} />
-      <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={HERO_VIDEO_OVERLAY_PERCENT} />
-      <Marquee />
-      <Products onSelectProduct={setSelectedProduct} />
-      <Story />
-      <Founders />
-      <Contact />
+      <main id="main-content" tabIndex={-1}>
+        <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={HERO_VIDEO_OVERLAY_PERCENT} />
+        <Marquee />
+        <Products onSelectProduct={setSelectedProduct} />
+        <IceCreamAlternativeSection onOpenQuickOrder={handleOpenGeneralOrder} />
+        <Story />
+        <SuratDeliveryHub />
+        <SuratFaqSection />
+        <Founders />
+        <Contact />
+      </main>
       <Footer />
 
       {/* Interactive Product Quick View & Order Configurator */}

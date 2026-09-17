@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://frezzdrezz.com/</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/logo-384.png</image:loc>
+      <image:title>Frezz Drezz Official Logo</image:title>
+      <image:caption>Frezz Drezz — 100% Real Freeze-Dried Fruit in Surat, Gujarat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/pineapple.webp</image:loc>
+      <image:title>Frezz Drezz Pineapple Freeze Dried Fruit</image:title>
+      <image:caption>Pure crunchy pineapple with zero added sugar in Surat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/banana.webp</image:loc>
+      <image:title>Frezz Drezz Banana Freeze Dried Fruit</image:title>
+      <image:caption>Golden cream freeze dried ripe bananas in Surat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/strawberry.webp</image:loc>
+      <image:title>Frezz Drezz Strawberry Freeze Dried Fruit</image:title>
+      <image:caption>Ruby freeze dried strawberries, the perfect ice cream topping and healthy alternative</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/kiwi.webp</image:loc>
+      <image:title>Frezz Drezz Kiwi Freeze Dried Fruit</image:title>
+      <image:caption>Tangy green freeze-dried kiwi slices delivered in Surat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/apple.webp</image:loc>
+      <image:title>Frezz Drezz Apple Freeze Dried Fruit</image:title>
+      <image:caption>Crisp orchard freeze-dried apple slices in Surat, Gujarat</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://frezzdrezz.com/assets/founders.webp</image:loc>
+      <image:title>Frezz Drezz Founders Rudrax and Aditya</image:title>
+      <image:caption>Founders of Frezz Drezz handcrafted in Surat</image:caption>
+    </image:image>
+  </url>
+</urlset>
+
