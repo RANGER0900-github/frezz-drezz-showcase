@@ -2142,7 +2142,7 @@ function Home() {
   }, [loaded]);
 
   return (
-    <div className="relative min-h-screen bg-cream text-ink antialiased selection:bg-gold selection:text-ink overflow-x-hidden w-full">
+    <div className="relative min-h-screen bg-cream text-ink antialiased selection:bg-gold selection:text-ink w-full">
       {/* WCAG 2.1 Accessibility Skip Link */}
       <a
         href="#main-content"
@@ -2155,7 +2155,7 @@ function Home() {
         {!loaded && <LuxuryPreloader onFinish={handlePreloaderFinish} />}
       </AnimatePresence>
 
-      <SmoothScroll />
+      {loaded && <SmoothScroll />}
       <Nav onOpenQuickOrder={handleOpenGeneralOrder} />
       <main id="main-content" tabIndex={-1}>
         <Hero onOpenQuickOrder={handleOpenGeneralOrder} overlayOpacity={HERO_VIDEO_OVERLAY_PERCENT} />
